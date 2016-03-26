@@ -61,4 +61,9 @@ public class MainActivity extends AppCompatActivity {
         num_Drinks++;
         textView.setText(Integer.toString(num_Drinks));
     }
+    public void resetDrink(View view) {
+        TextView textView = (TextView) findViewById(R.id.bac_level);
+        num_Drinks = 0;
+        textView.setText(Integer.toString(num_Drinks));
+    }
 }
