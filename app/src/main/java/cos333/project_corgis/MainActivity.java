@@ -8,8 +8,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    private int num_Drinks = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        TextView textView = (TextView) findViewById(R.id.bac_level);
+        textView.setText(Integer.toString(num_Drinks));
     }
 
     @Override
@@ -48,5 +54,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addOneDrink(View view) {
+        TextView textView = (TextView) findViewById(R.id.bac_level);
+        num_Drinks++;
+        textView.setText(Integer.toString(num_Drinks));
     }
 }

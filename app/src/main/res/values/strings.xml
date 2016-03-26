@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">Project_Corgis</string>
+    <string name="app_name">Holic</string>
     <string name="action_settings">Settings</string>
+    <string name="add_one_drink">+1</string>
+    <string name="bac_label">Number of drinks:</string>
+    <string name="bac_level">0 drinks</string>
 </resources>
