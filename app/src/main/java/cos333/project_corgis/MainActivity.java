@@ -1,5 +1,6 @@
 package cos333.project_corgis;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,11 +9,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private int num_Drinks = 0;
+    public final static String WEIGHT_MESSAGE = "cos333.project_corgis.WEIGHT_MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        TextView textView = (TextView) findViewById(R.id.bac_level);
-        textView.setText(Integer.toString(num_Drinks));
+        Spinner gender_spinner = (Spinner) findViewById(R.id.gender_spinner);
+        ArrayAdapter<CharSequence> gender_adapter = ArrayAdapter.createFromResource(this,
+                R.array.gender_choices, android.R.layout.simple_spinner_dropdown_item);
+        gender_spinner.setAdapter(gender_adapter);
     }
 
     @Override
@@ -56,14 +62,11 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addOneDrink(View view) {
-        TextView textView = (TextView) findViewById(R.id.bac_level);
-        num_Drinks++;
-        textView.setText(Integer.toString(num_Drinks));
-    }
-    public void resetDrink(View view) {
-        TextView textView = (TextView) findViewById(R.id.bac_level);
-        num_Drinks = 0;
-        textView.setText(Integer.toString(num_Drinks));
+    public void sendInfo(View view) {
+        Intent intent = new Intent(this, DrinkLogActivity.class);
+        EditText editText = (EditText) findViewById(R.id.edit_weight);
+        String weight = editText.getText().toString();
+        intent.putExtra(WEIGHT_MESSAGE, weight);
+        startActivity(intent);
     }
 }

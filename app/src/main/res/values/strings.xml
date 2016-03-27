@@ -4,4 +4,16 @@
     <string name="add_one_drink">+1</string>
     <string name="bac_label">Number of drinks:</string>
     <string name="reset_drink">Reset</string>
+    <string name="title_activity_drink_log">Drink Logging</string>
+    <string name="information_prompt">
+        To help us keep better track of your BAC, enter your information.</string>
+    <string name="weight_prompt">Enter your weight in lbs:</string>
+    <string name="weight_hint">e.g. 150</string>
+    <string name="okay">OK</string>
+    <string name="gender_prompt">Enter your body type:</string>
+    <string-array name="gender_choices">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
 </resources>
