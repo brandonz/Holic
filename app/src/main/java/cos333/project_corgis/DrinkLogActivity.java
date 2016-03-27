@@ -20,6 +20,9 @@ public class DrinkLogActivity extends AppCompatActivity {
     private int num_Drinks = 0;
     // User-entered weight. To be used in BAC calculations.
     private int weight;
+    // User-entered gender. To be used in BAC calculations.
+    // Later we will change this to a body fat percentage. (@emzhang314)
+    private String gender;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -46,6 +49,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String s_weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
         weight = s_weight.isEmpty() ? 0 : Integer.parseInt(s_weight);
+        gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
 
         setBAC(num_Drinks);
 
@@ -55,8 +59,8 @@ public class DrinkLogActivity extends AppCompatActivity {
     }
 
     /**
-     * Sets the bac text to the given level. Should be a float, actually.
-     *
+     * Sets the bac text to the given level.
+     * Change to a float later (@aplus95)
      * @param bac
      */
     private void setBAC(int bac) {
