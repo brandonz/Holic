@@ -26,7 +26,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberSigned"
+        android:inputType="number"
         android:ems="10"
         android:id="@+id/edit_weight"
         android:hint="@string/weight_hint"/>

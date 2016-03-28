@@ -84,11 +84,12 @@ public class DrinkLogActivity extends AppCompatActivity {
         double alc = 0.6 * bac_num_drinks; //fluid ounces of alcohol
 
         String genders[] = getResources().getStringArray(R.array.gender_choices);
-        double r = 0;
+        double r;
         if (gender.equals(genders[0]))
             r = 0.68; // L/kg
         else
             r = 0.55; // L/kg
+        System.out.println(r);
         double C = 0.8*alc / (weight *16 * r) - b*dt;
         return C*100;
     }

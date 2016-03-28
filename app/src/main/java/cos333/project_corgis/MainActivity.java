@@ -1,5 +1,7 @@
 package cos333.project_corgis;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -70,6 +72,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Intent intent = new Intent(this, DrinkLogActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_weight);
         String weight = editText.getText().toString();
+        if (weight.isEmpty() || Integer.parseInt(weight) == 0 || Integer.parseInt(weight) > 1000) {
+            AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+            builder.setMessage("Please give a valid weight");
+            builder.setTitle("Error Message");
+            builder.setCancelable(true);
+
+            builder.setPositiveButton(
+                    R.string.okay,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            builder.create().show();
+
+            return;
+        }
+
+
         intent.putExtra(WEIGHT_MESSAGE, weight);
         intent.putExtra(BODY_TYPE_MESSAGE, body_type);
         startActivity(intent);
