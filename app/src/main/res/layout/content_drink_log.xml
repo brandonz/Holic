@@ -24,16 +24,32 @@
         android:layout_height="wrap_content"
         android:text="@string/reset_drink"
         android:onClick="resetDrink"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh_bac"
+        android:id="@+id/button"
+        android:onClick="refreshBAC" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/bac_label"/>
+        android:text="@string/drinks_label"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/bac_label"
+        android:id="@+id/bac_level" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="20sp"
-        android:id="@+id/bac_level"
+        android:id="@+id/drinks_level"
         />
 
 </LinearLayout>

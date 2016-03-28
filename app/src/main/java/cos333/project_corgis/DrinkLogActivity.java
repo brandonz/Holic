@@ -14,15 +14,26 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+
 public class DrinkLogActivity extends AppCompatActivity {
     // When BAC calculations are implemented this won't suffice.
     // We will need timestamps for each button press.
-    private int num_Drinks = 0;
+    private double num_drinks = 0;
+
+    // Variables for BAC Calculation.
+    // number of drinks since 0 BAC.
+    private double bac_num_drinks = 0;
+    // time of first drink.
+    private long millis = 0;
+
     // User-entered weight. To be used in BAC calculations.
     private int weight;
-    // User-entered gender. To be used in BAC calculations.
-    // Later we will change this to a body fat percentage. (@emzhang314)
+    // User-entered gender. To be used in BAC calculations. Will have a value from
+    // @strings/gender_choices
     private String gender;
+    //global variable for BAC value
+    private double BAC;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -51,7 +62,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         weight = s_weight.isEmpty() ? 0 : Integer.parseInt(s_weight);
         gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
 
-        setBAC(num_Drinks);
+        displayDrinks();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -59,23 +70,59 @@ public class DrinkLogActivity extends AppCompatActivity {
     }
 
     /**
-     * Sets the bac text to the given level.
-     * Change to a float later (@aplus95)
-     * @param bac
+     * Calculate the BAC level
      */
-    private void setBAC(int bac) {
+    private double calcBAC() {
+        if (millis == 0)
+            return 0;
+
+        //use Widmark's equation
+        // Equation taken from http://www.wsp.wa.gov/breathtest/docs/webdms/Studies_Articles/Widmarks%20Equation%2009-16-1996.pdf
+        // C =  0.8 A z / (W r) - b dt
+        double b = 0.00017; //kg/L/hr
+        double dt = (double)(System.currentTimeMillis() - millis)/(1000*3600);
+        double alc = 0.6 * bac_num_drinks; //fluid ounces of alcohol
+
+        String genders[] = getResources().getStringArray(R.array.gender_choices);
+        double r = 0;
+        if (gender.equals(genders[0]))
+            r = 0.68; // L/kg
+        else
+            r = 0.55; // L/kg
+        double C = 0.8*alc / (weight *16 * r) - b*dt;
+        return C*100;
+    }
+
+    private void displayDrinks() {
+        TextView textView = (TextView) findViewById(R.id.drinks_level);
+        textView.setText(Double.toString(num_drinks));
+    }
+
+    private void displayBAC() {
         TextView textView = (TextView) findViewById(R.id.bac_level);
-        textView.setText(Integer.toString(bac));
+        textView.setText(String.format( "BAC level: %.3f ", calcBAC()));
     }
 
     public void addOneDrink(View view) {
-        num_Drinks++;
-        setBAC(num_Drinks);
+        num_drinks++;
+        bac_num_drinks++;
+        if (bac_num_drinks == 1) {
+            millis = System.currentTimeMillis();
+        }
+        displayDrinks();
+        displayBAC();
     }
 
     public void resetDrink(View view) {
-        num_Drinks = 0;
-        setBAC(num_Drinks);
+        num_drinks = 0;
+        bac_num_drinks = 0;
+        millis = 0;
+        displayDrinks();
+        displayBAC();
+    }
+
+    public void refreshBAC(View view) {
+        displayBAC();
     }
 
     @Override
