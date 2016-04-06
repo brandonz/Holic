@@ -24,4 +24,8 @@
         most accurately reflects your body type (e.g. transgender people who have not taken hormones
         should use the gender assigned at birth).
         </string>
+    <string name="title_activity_landing">Home</string>
+    <string name="new_night">Start a new night!</string>
+    <string name="stats">Stats</string>
+    <string name="chats">Chat Rooms</string>
 </resources>
