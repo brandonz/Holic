@@ -30,14 +30,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         Spinner gender_spinner = (Spinner) findViewById(R.id.gender_spinner);
         ArrayAdapter<CharSequence> gender_adapter = ArrayAdapter.createFromResource(this,
@@ -75,8 +75,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (weight.isEmpty() || Integer.parseInt(weight) == 0 || Integer.parseInt(weight) > 1000) {
             AlertDialog.Builder builder  = new AlertDialog.Builder(this);
 
-            builder.setMessage("Please give a valid weight");
-            builder.setTitle("Error Message");
+            builder.setMessage("@string/enter_valid_weight");
+            builder.setTitle("@string/error_message");
             builder.setCancelable(true);
 
             builder.setPositiveButton(

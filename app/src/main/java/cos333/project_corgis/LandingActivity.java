@@ -19,20 +19,21 @@ public class LandingActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
     }
 
     // TODO: Open the drink log activity. Modify the drink log activity to get gender and weight
     // from the server instead of the other page.
     public void startDrinkActivity(View view) {
-        // Intent intent = new Intent(this);
+        // Intent intent = new Intent(this, DrinkLogActivity.class);
+        // startActivity(intent);
     }
 
     // TODO: Open the settings activity.
