@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
                 );
 
                 // GET request using fbid
-                new GetAsyncTask().execute("https://holic-server/users/"
+                new GetAsyncTask().execute("https://holic-server/api/users/"
                         + loginResult.getAccessToken().getUserId());
 
             }
@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             try {
                 JSONArray obj = new JSONArray(result);
-                if (obj.length() >= 0) {
+                if (obj.length() > 0) {
                     final Intent homeScreen = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(homeScreen);
                 }
