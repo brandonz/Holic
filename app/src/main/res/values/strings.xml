@@ -5,8 +5,8 @@
     <string name="add_one_drink">+1</string>
     <string name="add_half_drink">+1/2</string>
     <string name="refresh_bac">Refresh</string>
-    <string name="drinks_label">Number of drinks:</string>
-    <string name="bac_label">BAC:</string>
+    <string name="drinks_label">Number of drinks: %.1f</string>
+    <string name="bac_label">BAC: %.3f</string>
     <string name="reset_drink">Reset</string>
     <string name="title_activity_drink_log">Drink Logging</string>
     <string name="information_prompt">
@@ -19,10 +19,79 @@
         <item>Male</item>
         <item>Female</item>
     </string-array>
+    <string name="enter_valid_weight">Please give a valid weight</string>
+    <string name="error_message">Error Message</string>
     <string name="gender_disclaimer">
         *Physical body type is needed to calculate your BAC more accurately.
         We recognize that not everyone falls into male/female categories. Please use the gender that
         most accurately reflects your body type (e.g. transgender people who have not taken hormones
         should use the gender assigned at birth).
         </string>
+    <string name="create_profile">Create Your Profile</string>
+    <string name="profile_firstname">First Name</string>
+    <string name="profile_lastname">Last Name</string>
+    <string name="title_activity_view_profile">ViewProfile</string>
+    <string name="title_activity_landing">Home</string>
+    <string name="new_night">Start a new night!</string>
+    <string name="stats">Stats</string>
+    <string name="chats">Chat Rooms</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
 </resources>
