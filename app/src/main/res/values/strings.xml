@@ -4,4 +4,6 @@
     <string name="add_one_drink">+1</string>
     <string name="bac_label">Number of drinks:</string>
     <string name="reset_drink">Reset</string>
+
+    <string name="facebook_app_id">1177856802232872</string>
 </resources>
