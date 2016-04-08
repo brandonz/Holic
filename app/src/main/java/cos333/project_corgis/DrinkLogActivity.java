@@ -65,6 +65,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
 
         displayDrinks();
+        displayBAC();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -100,12 +101,12 @@ public class DrinkLogActivity extends AppCompatActivity {
 
     private void displayDrinks() {
         TextView textView = (TextView) findViewById(R.id.drinks_level);
-        textView.setText(Double.toString(num_drinks));
+        textView.setText(String.format(getResources().getString(R.string.drinks_label), num_drinks));
     }
 
     private void displayBAC() {
         TextView textView = (TextView) findViewById(R.id.bac_level);
-        textView.setText(String.format("%.3f", calcBAC()));
+        textView.setText(String.format(getResources().getString(R.string.bac_label), calcBAC()));
     }
 
     public void addOneDrink(View view) {

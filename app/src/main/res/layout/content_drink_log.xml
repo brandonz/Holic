@@ -40,12 +40,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/drinks_label"/>
+            android:textSize="40sp"
+            android:id="@+id/bac_level" />
+    </TableRow>
 
+    <TableRow>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="10dp"/>
+    </TableRow>
+
+    <TableRow>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:id="@+id/drinks_level"
             />
     </TableRow>
@@ -57,29 +65,6 @@
     </TableRow>
 
     <TableRow>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/bac_label"
-            android:id="@+id/bac_label" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/bac_level" />
-    </TableRow>
-
-    <TableRow>
-        <Space
-            android:layout_width="1dp"
-            android:layout_height="10dp"/>
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

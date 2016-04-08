@@ -4,8 +4,8 @@
     <string name="add_one_drink">+1</string>
     <string name="add_half_drink">+1/2</string>
     <string name="refresh_bac">Refresh</string>
-    <string name="drinks_label">Number of drinks: </string>
-    <string name="bac_label">BAC level: </string>
+    <string name="drinks_label">Number of drinks: %.1f</string>
+    <string name="bac_label">BAC level: %.3f</string>
     <string name="reset_drink">Reset</string>
     <string name="title_activity_drink_log">Drink Logging</string>
     <string name="information_prompt">
