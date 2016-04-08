@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="cos333.project_corgis.DrinkLogActivity">
+    <item
+        android:id="@+id/reset_drink"
+        android:orderInCategory="100"
+        android:title="@string/reset_drink"
+        app:showAsAction="never" />
+
+</menu>

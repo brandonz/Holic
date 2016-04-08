@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -13,43 +13,65 @@
     tools:context="cos333.project_corgis.DrinkLogActivity"
     tools:showIn="@layout/activity_drink_log">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_one_drink"
-        android:onClick="addOneDrink"/>
+    <TableRow>
+        <Button
+            android:layout_width="0sp"
+            android:layout_height="100sp"
+            android:layout_weight="1"
+            android:textSize="50sp"
+            android:text="@string/add_one_drink"
+            android:onClick="addOneDrink"/>
+        <Button
+            android:layout_width="0sp"
+            android:layout_height="100sp"
+            android:layout_weight="1"
+            android:textSize="50sp"
+            android:text="@string/add_half_drink"
+            android:onClick="addHalfDrink"/>
+    </TableRow>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/refresh_bac"
-        android:id="@+id/button"
-        android:onClick="refreshBAC" />
+    <TableRow>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="10dp"/>
+    </TableRow>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/drinks_label"/>
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="40sp"
+            android:id="@+id/bac_level" />
+    </TableRow>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:id="@+id/drinks_level"
-        />
+    <TableRow>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="10dp"/>
+    </TableRow>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/bac_label"
-        android:id="@+id/bac_level" />
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/drinks_level"
+            />
+    </TableRow>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/reset_drink"
-        android:onClick="resetDrink"/>
+    <TableRow>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="10dp"/>
+    </TableRow>
+
+    <TableRow>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/refresh_bac"
+            android:id="@+id/button"
+            android:onClick="refreshBAC" />
+    </TableRow>
 
 
-</LinearLayout>
+</TableLayout>
