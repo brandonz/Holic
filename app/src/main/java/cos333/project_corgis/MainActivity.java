@@ -1,5 +1,8 @@
 package cos333.project_corgis;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,11 +11,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
-    private int num_Drinks = 0;
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    public final static String WEIGHT_MESSAGE = "cos333.project_corgis.WEIGHT_MESSAGE";
+    public final static String BODY_TYPE_MESSAGE = "cos333.project_corgis.BODY_TYPE_MESSAGE";
+    private String body_type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +39,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        TextView textView = (TextView) findViewById(R.id.bac_level);
-        textView.setText(Integer.toString(num_Drinks));
+        Spinner gender_spinner = (Spinner) findViewById(R.id.gender_spinner);
+        ArrayAdapter<CharSequence> gender_adapter = ArrayAdapter.createFromResource(this,
+                R.array.gender_choices, android.R.layout.simple_spinner_dropdown_item);
+        gender_spinner.setAdapter(gender_adapter);
+        gender_spinner.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -56,14 +68,46 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addOneDrink(View view) {
-        TextView textView = (TextView) findViewById(R.id.bac_level);
-        num_Drinks++;
-        textView.setText(Integer.toString(num_Drinks));
+    public void sendInfo(View view) {
+        Intent intent = new Intent(this, DrinkLogActivity.class);
+        EditText editText = (EditText) findViewById(R.id.edit_weight);
+        String weight = editText.getText().toString();
+        if (weight.isEmpty() || Integer.parseInt(weight) == 0 || Integer.parseInt(weight) > 1000) {
+            AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+            builder.setMessage("Please give a valid weight");
+            builder.setTitle("Error Message");
+            builder.setCancelable(true);
+
+            builder.setPositiveButton(
+                    R.string.okay,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            builder.create().show();
+
+            return;
+        }
+
+
+        intent.putExtra(WEIGHT_MESSAGE, weight);
+        intent.putExtra(BODY_TYPE_MESSAGE, body_type);
+        startActivity(intent);
     }
-    public void resetDrink(View view) {
-        TextView textView = (TextView) findViewById(R.id.bac_level);
-        num_Drinks = 0;
-        textView.setText(Integer.toString(num_Drinks));
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        body_type = (String) parent.getItemAtPosition(position);
+        // Add some code here to handle the Other case (@emzhang314)
+        // Start a new activity to ask for body fat percentage.
+        // Instead of storing a string body_type we should store a percentage
+        // This is ok for now.
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
