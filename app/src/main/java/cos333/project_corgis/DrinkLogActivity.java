@@ -7,6 +7,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -47,15 +49,15 @@ public class DrinkLogActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         String s_weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
@@ -63,6 +65,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
 
         displayDrinks();
+        displayBAC();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -90,31 +93,48 @@ public class DrinkLogActivity extends AppCompatActivity {
         else
             r = 0.55; // L/kg
         System.out.println(r);
-        double C = 0.8*alc / (weight *16 * r) - b*dt;
+        double C = Math.max(0.8 * alc / (weight * 16 * r) - b * dt, 0);
+        if (C == 0)
+            bac_num_drinks = 0;
         return C*100;
     }
 
     private void displayDrinks() {
         TextView textView = (TextView) findViewById(R.id.drinks_level);
-        textView.setText(Double.toString(num_drinks));
+        textView.setText(String.format(getResources().getString(R.string.drinks_label), num_drinks));
     }
 
     private void displayBAC() {
         TextView textView = (TextView) findViewById(R.id.bac_level);
-        textView.setText(String.format( "BAC level: %.3f ", calcBAC()));
+        textView.setText(String.format(getResources().getString(R.string.bac_label), calcBAC()));
     }
 
     public void addOneDrink(View view) {
-        num_drinks++;
-        bac_num_drinks++;
-        if (bac_num_drinks == 1) {
+        addDrinks(1);
+    }
+
+    public void addHalfDrink(View view) {
+        addDrinks(0.5);
+    }
+
+    /**
+     * Adds drinks, recalculates and displays BAC.
+     * @param drinks
+     */
+    public void addDrinks(double drinks) {
+        if (bac_num_drinks == 0) {
             millis = System.currentTimeMillis();
         }
+        num_drinks += drinks;
+        bac_num_drinks += drinks;
         displayDrinks();
         displayBAC();
     }
 
-    public void resetDrink(View view) {
+    /**
+     * Resets drink with no argument.
+     */
+    public void resetDrink() {
         num_drinks = 0;
         bac_num_drinks = 0;
         millis = 0;
@@ -164,5 +184,29 @@ public class DrinkLogActivity extends AppCompatActivity {
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_drinklog, menu);
+        return true;
+    }
+
+    /**
+     * Handles menu selection.
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.reset_drink:
+                resetDrink();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

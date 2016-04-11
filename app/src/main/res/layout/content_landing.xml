@@ -14,7 +14,6 @@
     tools:context="cos333.project_corgis.LandingActivity"
     tools:showIn="@layout/activity_landing">
 
-    <!--TODO: Make this pretty e.g. take up the whole screen D: how do???-->
     <!--TODO: Use pictures instead of buttons?-->
     <TableRow
         android:layout_height="fill_parent"
