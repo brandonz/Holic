@@ -37,6 +37,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".CreateProfile"
+            android:label="@string/create_profile"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
