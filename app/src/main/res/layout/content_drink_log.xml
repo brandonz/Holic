@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/imageButton"
             android:background="#5e4bdf"
-            android:src="@drawable/addone" />
+            android:src="@drawable/addone"
+            android:onClick="addOneDrink" />
 
         <Space
             android:layout_width="40dp"
@@ -31,7 +32,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/imageButton2"
             android:src="@drawable/addhalf"
-            android:background="#5e4bdf" />
+            android:background="#5e4bdf"
+            android:onClick="addHalfDrink" />
 
     </TableRow>
 
