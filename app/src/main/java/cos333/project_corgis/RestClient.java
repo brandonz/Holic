@@ -4,45 +4,44 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.InputStream;
+// import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class RestClient {
-   public static String Get(String dataUrl) {
+   public static String Get(String url_string) {
        // String dataUrlParameters = "email="+"brandonz@princeton.edu"+"&name="+"Brandon";
        URL url;
-       HttpURLConnection connection = null;
+       HttpURLConnection con = null;
        try {
-           // Create connection
-           url = new URL(dataUrl);
-           connection = (HttpURLConnection) url.openConnection();
-           connection.setRequestMethod("GET");
-           connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//           connection.setRequestProperty("Content-Length","" + Integer.toString(dataUrlParameters.getBytes().length));
-//           connection.setRequestProperty("Content-Language", "en-US");
-           connection.setUseCaches(false);
-           connection.setDoInput(true);
-           connection.setDoOutput(true);
-           // Send request
-           DataOutputStream wr = new DataOutputStream(
-                   connection.getOutputStream());
-//           wr.writeBytes(dataUrlParameters);
-           wr.flush();
-           wr.close();
-           // Get Response
-           InputStream is = connection.getInputStream();
-           BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-           String line;
+
+           url = new URL(url_string);
+           con = (HttpURLConnection) url.openConnection();
+           con.setRequestMethod("GET");
+
+           //add request header (crashes without this, shrug)
+           con.setRequestProperty("User-Agent", "Android");
+
+           // Debugging
+           int responseCode = con.getResponseCode();
+           System.out.println("\nSending 'GET' request to URL : " + url);
+           System.out.println("Response Code : " + responseCode);
+
+           BufferedReader in = new BufferedReader(
+                   new InputStreamReader(con.getInputStream()));
+           String inputLine;
            StringBuffer response = new StringBuffer();
-           while ((line = rd.readLine()) != null) {
-               response.append(line);
-               response.append('\r');
+
+           while ((inputLine = in.readLine()) != null) {
+               response.append(inputLine);
            }
-           rd.close();
+           in.close();
            String responseStr = response.toString();
            Log.d("Server response", responseStr);
+           System.out.println(responseStr);
            return responseStr;
        } catch (Exception e) {
 
@@ -50,47 +49,45 @@ public class RestClient {
 
        } finally {
 
-           if (connection != null) {
-               connection.disconnect();
+           if (con != null) {
+               con.disconnect();
            }
        }
        return null;
    }
 
-    public static String Post(String dataUrl) {
-//        String dataUrlParameters = "email="+"brandonz@princeton.edu"+"&name="+"Brandon";
+    public static String Post(String url_string, String urlParams) {
         URL url;
-        HttpURLConnection connection = null;
+        HttpURLConnection con = null;
         try {
-            // Create connection
-            url = new URL(dataUrl);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-//            connection.setRequestProperty("Content-Length","" + Integer.toString(dataUrlParameters.getBytes().length));
-            connection.setRequestProperty("Content-Language", "en-US");
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            // Send request
-            DataOutputStream wr = new DataOutputStream(
-                    connection.getOutputStream());
-//            wr.writeBytes(dataUrlParameters);
+            url = new URL(url_string);
+            con = (HttpsURLConnection) url.openConnection();
+
+            //add request header
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", "Android");
+            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+            // Send post request
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(urlParams);
             wr.flush();
             wr.close();
-            // Get Response
-            InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
+
+            // code to read the response. Should be the "User created!" message.
+            // Leaving it here if we need the response later; currently does nothing after return.
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
             StringBuffer response = new StringBuffer();
-            while ((line = rd.readLine()) != null) {
-                response.append(line);
-                response.append('\r');
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
             }
-            rd.close();
-            String responseStr = response.toString();
-            Log.d("Server response",responseStr);
-            return responseStr;
+            in.close();
+            String str_response = response.toString();
+            return str_response;
 
         } catch (Exception e) {
 
@@ -98,11 +95,10 @@ public class RestClient {
 
         } finally {
 
-            if (connection != null) {
-                connection.disconnect();
+            if (con != null) {
+                con.disconnect();
             }
         }
-
         return null;
     }
 }
