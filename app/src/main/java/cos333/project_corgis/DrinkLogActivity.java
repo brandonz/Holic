@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -62,10 +63,15 @@ public class DrinkLogActivity extends AppCompatActivity {
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        String s_weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
-        weight = s_weight.isEmpty() ? 0 : Integer.parseInt(s_weight);
-        gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
+//        Intent intent = getIntent();
+//        String s_weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
+//        weight = s_weight.isEmpty() ? 0 : Integer.parseInt(s_weight);
+//        gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        // 0 - for private mode
+        weight = pref.getInt("weight", 100); // default? should never go there
+        gender = pref.getString("gender", "Male"); // default? also problematic lol
 
         displayDrinks();
         displayBAC();
@@ -210,24 +216,6 @@ public class DrinkLogActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    // Get task for gender/weight
-    private class GetAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... url) {
-            return RestClient.Get(url[0]);
-        }
-
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                JSONArray obj = new JSONArray(result);
-
-            } catch(Exception e) {
-            }
         }
     }
 }

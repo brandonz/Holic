@@ -3,6 +3,7 @@ package cos333.project_corgis;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,8 +23,6 @@ import com.facebook.Profile;
 import com.facebook.AccessToken;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    public final static String WEIGHT_MESSAGE = "cos333.project_corgis.WEIGHT_MESSAGE";
-    public final static String BODY_TYPE_MESSAGE = "cos333.project_corgis.BODY_TYPE_MESSAGE";
     private String body_type;
 
     @Override
@@ -105,8 +104,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 toMF(body_type));
         new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
 
-        intent.putExtra(WEIGHT_MESSAGE, weight);
-        intent.putExtra(BODY_TYPE_MESSAGE, body_type);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("weight", Integer.parseInt(weight));
+        editor.putString("gender", body_type);
+        editor.commit();
+
         startActivity(intent);
     }
 

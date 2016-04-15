@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,9 +37,6 @@ public class LoginActivity extends AppCompatActivity {
         info = (TextView)findViewById(R.id.info);
         loginButton = (LoginButton)findViewById(R.id.login_button);
 
-        // TODO: go to MainActivity if server lookup fails
-        // TODO: go to LandingActivity if server lookup succeeds
-        // final Intent homeScreen = new Intent(LoginActivity.this, LandingActivity.class);
         if (isLoggedIn()) {
             new GetAsyncTask().execute(getResources().getString(R.string.server)
                     + AccessToken.getCurrentAccessToken().getUserId());
@@ -120,10 +118,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (obj.length() > 0) {
                     final Intent landing = new Intent(LoginActivity.this, LandingActivity.class);
 
-                    landing.putExtra(MainActivity.WEIGHT_MESSAGE,
-                            Integer.toString(person.getInt("weight")));
-                    landing.putExtra(MainActivity.BODY_TYPE_MESSAGE,
-                            mfToGender(person.getString("gender")));
+                    SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("id", AccessToken.getCurrentAccessToken().getUserId());
+                    editor.putInt("weight", person.getInt("weight"));
+                    editor.putString("gender", mfToGender(person.getString("gender")));
+                    editor.commit();
                     startActivity(landing);
                 } else {
                     final Intent newUserScreen = new Intent(LoginActivity.this, MainActivity.class);
