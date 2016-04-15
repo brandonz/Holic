@@ -36,7 +36,7 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,7 +44,7 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
                         .setAction("Action", null).show();
             }
         });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
 
         Spinner gender_spinner = (Spinner) findViewById(R.id.gender_spinner);
         ArrayAdapter<CharSequence> gender_adapter = ArrayAdapter.createFromResource(this,
