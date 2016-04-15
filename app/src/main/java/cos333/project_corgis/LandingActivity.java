@@ -11,10 +11,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 
 public class LandingActivity extends AppCompatActivity {
+    private String weight;
+    private String gender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +36,16 @@ public class LandingActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
+        // Saves info to pass to Drink Logger.
+        Intent intent = getIntent();
+        weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
+        gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
+        System.out.println(weight);
+        System.out.println(gender);
     }
 
+    // TODO: Open the drink log activity. Modify the drink log activity to get gender and weight
+    // from the server instead of the other page.
     public void startDrinkActivity(View view) {
         // This format string is hardcoded for now because I had problems with the & symbol in the
         // strings resources file lol. TODO: put it in the resources
@@ -42,12 +55,21 @@ public class LandingActivity extends AppCompatActivity {
         new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
 
         Intent intent = new Intent(this, DrinkLogActivity.class);
+        intent.putExtra(MainActivity.WEIGHT_MESSAGE, weight);
+        intent.putExtra(MainActivity.BODY_TYPE_MESSAGE, gender);
         startActivity(intent);
     }
 
+    // TODO: Open the settings activity.
     public void openSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    public void openLogout() {
+        System.out.println("in logout");
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        LoginManager.getInstance().logOut();
     }
 
     @Override
@@ -69,6 +91,8 @@ public class LandingActivity extends AppCompatActivity {
             case R.id.action_settings:
                 openSettings();
                 return true;
+            case R.id.action_logout:
+                openLogout();
             default:
                 return super.onOptionsItemSelected(item);
         }

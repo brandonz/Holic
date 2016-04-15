@@ -54,7 +54,7 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
     }
 
     public void sendInfo(View view) {
-        Intent intent = new Intent(this, DrinkLogActivity.class);
+        Intent intent = new Intent(this, LandingActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_weight);
         String weight = editText.getText().toString();
         if (weight.isEmpty() || Integer.parseInt(weight) == 0 || Integer.parseInt(weight) > 1000) {
