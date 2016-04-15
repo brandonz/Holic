@@ -18,18 +18,21 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="45"
             android:id="@+id/imageButton"
             android:background="#5e4bdf"
             android:src="@drawable/addone"
             android:onClick="addOneDrink" />
 
         <Space
-            android:layout_width="40dp"
-            android:layout_height="10dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"/>
 
         <ImageButton
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="45"
             android:id="@+id/imageButton2"
             android:src="@drawable/addhalf"
             android:background="#5e4bdf"
