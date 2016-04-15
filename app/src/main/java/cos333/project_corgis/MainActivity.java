@@ -3,6 +3,7 @@ package cos333.project_corgis;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,7 +17,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
+
+import com.facebook.Profile;
+import com.facebook.AccessToken;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     public final static String WEIGHT_MESSAGE = "cos333.project_corgis.WEIGHT_MESSAGE";
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendInfo(View view) {
+    public void sendInfo(View view) throws Exception {
         Intent intent = new Intent(this, DrinkLogActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_weight);
         String weight = editText.getText().toString();
@@ -91,6 +94,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return;
         }
 
+        // This format string is hardcoded for now because I had problems with the & symbol in the
+        // strings resources file lol. TODO: put it in the resources
+        String formatString = "fbid=%s&fname=%s&lname=%s&weight=%s&gender=%s";
+        String id = AccessToken.getCurrentAccessToken().getUserId();
+        Profile prof = Profile.getCurrentProfile();
+        String firstName = prof.getFirstName();
+        String lastName = prof.getLastName();
+        String urlParameters = String.format(formatString, id, firstName, lastName, weight,
+                toMF(body_type));
+        System.out.println(formatString);
+        new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
 
         intent.putExtra(WEIGHT_MESSAGE, weight);
         intent.putExtra(BODY_TYPE_MESSAGE, body_type);
@@ -102,8 +116,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         body_type = (String) parent.getItemAtPosition(position);
     }
 
+    private String toMF(String gender) {
+        String genders[] = getResources().getStringArray(R.array.gender_choices);
+        if (gender.equals(genders[0]))
+            return "M";
+        else
+            return "F";
+    }
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    //Async task for post
+    private class PostAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Post(url[0], url[1]);
+        }
     }
 }

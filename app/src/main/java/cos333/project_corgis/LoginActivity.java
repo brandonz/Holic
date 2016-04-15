@@ -35,25 +35,28 @@ public class LoginActivity extends AppCompatActivity {
         info = (TextView)findViewById(R.id.info);
         loginButton = (LoginButton)findViewById(R.id.login_button);
 
-        final Intent homeScreen = new Intent(LoginActivity.this, MainActivity.class);
-        if (isLoggedIn())
-            LoginActivity.this.startActivity(homeScreen);
+        // TODO: go to MainActivity if server lookup fails
+        // TODO: go to LandingActivity if server lookup succeeds
+        // final Intent homeScreen = new Intent(LoginActivity.this, LandingActivity.class);
+        if (isLoggedIn()) {
+            new GetAsyncTask().execute(getResources().getString(R.string.server)
+                    + AccessToken.getCurrentAccessToken().getUserId());
+        }
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                info.setText(
-                        "User ID: "
-                                + loginResult.getAccessToken().getUserId()
-                                + "\n" +
-                                "Auth Token: "
-                                + loginResult.getAccessToken().getToken()
-                );
+//                info.setText(
+//                        "User ID: "
+//                                + loginResult.getAccessToken().getUserId()
+//                                + "\n" +
+//                                "Auth Token: "
+//                                + loginResult.getAccessToken().getToken()
+//                );
 
                 // GET request using fbid
-                new GetAsyncTask().execute("https://holic-server/api/users/"
+                new GetAsyncTask().execute(getResources().getString(R.string.server)
                         + loginResult.getAccessToken().getUserId());
-
             }
 
             @Override
@@ -103,8 +106,8 @@ public class LoginActivity extends AppCompatActivity {
     //Async task for get
     private class GetAsyncTask extends AsyncTask<String, Void, String> {
         @Override
-        protected String doInBackground(String... urls) {
-            return RestClient.Get(urls[0]);
+        protected String doInBackground(String... url) {
+            return RestClient.Get(url[0]);
         }
 
         // onPostExecute displays the results of the AsyncTask.
@@ -113,8 +116,11 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 JSONArray obj = new JSONArray(result);
                 if (obj.length() > 0) {
-                    final Intent homeScreen = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(homeScreen);
+                    final Intent mainScreen = new Intent(LoginActivity.this, LandingActivity.class);
+                    startActivity(mainScreen);
+                } else {
+                    final Intent newUserScreen = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(newUserScreen);
                 }
             } catch(Exception e) {
             }

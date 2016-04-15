@@ -13,16 +13,32 @@ public class GlobalVars {
     private static GlobalVars instance;
 
     // Facebook id
-    private int userId;
+    private String userId;
+    // first name, from Facebook
+    private String fname;
+    // last name, from Facbeook
+    private String lname;
 
     // Restrict the constructor from being instantiated
     private GlobalVars() {}
 
-    public void setId(int id){
+    public void setId(String id){
         userId = id;
     }
-    public int getId(){
+    public String getId(){
         return userId;
+    }
+    public void setfname(String fname) {
+        this.fname = fname;
+    }
+    public String getfname() {
+        return fname;
+    }
+    public void setlname(String fname) {
+        this.lname = lname;
+    }
+    public String getlname() {
+        return lname;
     }
 
     public static synchronized GlobalVars getInstance(){
