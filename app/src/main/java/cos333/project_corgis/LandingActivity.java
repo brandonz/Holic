@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,6 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 
 public class LandingActivity extends AppCompatActivity {
 
@@ -29,14 +33,18 @@ public class LandingActivity extends AppCompatActivity {
 //        });
     }
 
-    // TODO: Open the drink log activity. Modify the drink log activity to get gender and weight
-    // from the server instead of the other page.
     public void startDrinkActivity(View view) {
+        // This format string is hardcoded for now because I had problems with the & symbol in the
+        // strings resources file lol. TODO: put it in the resources
+        String formatString = "fbid=%s";
+        String id = AccessToken.getCurrentAccessToken().getUserId();
+        String urlParameters = String.format(formatString, id);
+        new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
+
         Intent intent = new Intent(this, DrinkLogActivity.class);
         startActivity(intent);
     }
 
-    // TODO: Open the settings activity.
     public void openSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
@@ -63,6 +71,14 @@ public class LandingActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //Async task for post
+    private class PostAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Post(url[0], url[1]);
         }
     }
 
