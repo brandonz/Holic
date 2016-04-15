@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String lastName = prof.getLastName();
         String urlParameters = String.format(formatString, id, firstName, lastName, weight,
                 toMF(body_type));
-        System.out.println(formatString);
         new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
 
         intent.putExtra(WEIGHT_MESSAGE, weight);

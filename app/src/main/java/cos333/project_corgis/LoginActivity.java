@@ -17,6 +17,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -115,15 +116,29 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             try {
                 JSONArray obj = new JSONArray(result);
+                JSONObject person = obj.getJSONObject(0);
                 if (obj.length() > 0) {
-                    final Intent mainScreen = new Intent(LoginActivity.this, LandingActivity.class);
-                    startActivity(mainScreen);
+                    final Intent landing = new Intent(LoginActivity.this, LandingActivity.class);
+
+                    landing.putExtra(MainActivity.WEIGHT_MESSAGE,
+                            Integer.toString(person.getInt("weight")));
+                    landing.putExtra(MainActivity.BODY_TYPE_MESSAGE,
+                            mfToGender(person.getString("gender")));
+                    startActivity(landing);
                 } else {
                     final Intent newUserScreen = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(newUserScreen);
                 }
             } catch(Exception e) {
             }
+        }
+
+        private String mfToGender(String g) {
+            String genders[] = getResources().getStringArray(R.array.gender_choices);
+            if (g.equals("M"))
+                return genders[0];
+            else
+                return genders[1];
         }
     }
 }
