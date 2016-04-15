@@ -14,6 +14,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -114,8 +115,9 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             try {
                 JSONArray obj = new JSONArray(result);
-                JSONObject person = obj.getJSONObject(0);
+
                 if (obj.length() > 0) {
+                    JSONObject person = obj.getJSONObject(0);
                     final Intent landing = new Intent(LoginActivity.this, LandingActivity.class);
 
                     SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -126,8 +128,9 @@ public class LoginActivity extends AppCompatActivity {
                     editor.commit();
                     startActivity(landing);
                 } else {
-                    final Intent newUserScreen = new Intent(LoginActivity.this, MainActivity.class);
+                    final Intent newUserScreen = new Intent(LoginActivity.this, CreateProfile.class);
                     startActivity(newUserScreen);
+                    finish();
                 }
             } catch(Exception e) {
             }
