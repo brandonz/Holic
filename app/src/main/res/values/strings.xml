@@ -1,4 +1,5 @@
 <resources>
+    <string name="facebook_app_id">1177856802232872</string>
     <string name="app_name">Holic</string>
     <string name="server">https://holic-server.herokuapp.com/api/users/</string>
     <string name="action_settings">Settings</string>
@@ -6,7 +7,7 @@
     <string name="add_half_drink">+1/2</string>
     <string name="refresh_bac">Refresh</string>
     <string name="drinks_label">Number of drinks: %.1f</string>
-    <string name="bac_label">BAC level: %.3f</string>
+    <string name="bac_label">BAC: %.3f</string>
     <string name="reset_drink">Reset</string>
     <string name="title_activity_drink_log">Drink Logging</string>
     <string name="information_prompt">
@@ -14,19 +15,23 @@
     <string name="weight_prompt">Enter your weight in lbs:</string>
     <string name="weight_hint">e.g. 150</string>
     <string name="okay">OK</string>
-    <string name="enter_valid_weight">Please give a valid weight</string>
-    <string name="error_message">Error Message</string>
     <string name="gender_prompt">Enter your body type:</string>
     <string-array name="gender_choices">
         <item>Male</item>
         <item>Female</item>
     </string-array>
+    <string name="enter_valid_weight">Please give a valid weight</string>
+    <string name="error_message">Error Message</string>
     <string name="gender_disclaimer">
         *Physical body type is needed to calculate your BAC more accurately.
         We recognize that not everyone falls into male/female categories. Please use the gender that
         most accurately reflects your body type (e.g. transgender people who have not taken hormones
         should use the gender assigned at birth).
         </string>
+    <string name="create_profile">Create Your Profile</string>
+    <string name="profile_firstname">First Name</string>
+    <string name="profile_lastname">Last Name</string>
+    <string name="title_activity_view_profile">ViewProfile</string>
     <string name="title_activity_landing">Home</string>
     <string name="new_night">Start a new night!</string>
     <string name="stats">Stats</string>
@@ -90,6 +95,4 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-
-    <string name="facebook_app_id">1177856802232872</string>
 </resources>
