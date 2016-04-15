@@ -10,6 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+
 public class LandingActivity extends AppCompatActivity {
     private String weight;
     private String gender;
@@ -52,6 +55,12 @@ public class LandingActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openLogout() {
+        System.out.println("in logout");
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        LoginManager.getInstance().logOut();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -71,6 +80,8 @@ public class LandingActivity extends AppCompatActivity {
             case R.id.action_settings:
                 openSettings();
                 return true;
+            case R.id.action_logout:
+                openLogout();
             default:
                 return super.onOptionsItemSelected(item);
         }
