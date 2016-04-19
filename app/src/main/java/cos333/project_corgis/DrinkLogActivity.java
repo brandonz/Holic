@@ -14,11 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 public class DrinkLogActivity extends AppCompatActivity {
@@ -109,8 +111,8 @@ public class DrinkLogActivity extends AppCompatActivity {
     }
 
     private void displayDrinks() {
-        TextView textView = (TextView) findViewById(R.id.drinks_level);
-        textView.setText(String.format(getResources().getString(R.string.drinks_label), num_drinks));
+        new GetAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                AccessToken.getCurrentAccessToken().getUserId());
     }
 
     private void displayBAC() {
@@ -216,6 +218,32 @@ public class DrinkLogActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+    private class GetAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Get(url[0]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONArray obj = new JSONArray(result);
+                if (obj.length() > 0) {
+                    JSONObject session = obj.getJSONObject(0);
+                    JSONArray drinkLogs = session.getJSONArray("drinklogs");
+                    double currDrinks = 0;
+                    for (int i = 0; i < drinkLogs.length(); i++) {
+                        currDrinks += drinkLogs.getJSONObject(i).getDouble("drinkamount");
+                    }
+                    TextView textView = (TextView) findViewById(R.id.drinks_level);
+                    textView.setText(String.format(getResources().getString(R.string.drinks_label),
+                            currDrinks));
+                } else {
+                }
+            } catch(Exception e) {
+            }
         }
     }
 }

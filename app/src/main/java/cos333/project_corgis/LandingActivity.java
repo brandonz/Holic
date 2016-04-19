@@ -18,8 +18,6 @@ import com.facebook.AccessToken;
 import com.facebook.Profile;
 
 public class LandingActivity extends AppCompatActivity {
-    private String weight;
-    private String gender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +34,6 @@ public class LandingActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
-        // Saves info to pass to Drink Logger.
-        Intent intent = getIntent();
-        weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
-        gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
-        System.out.println(weight);
-        System.out.println(gender);
     }
 
     // TODO: Open the drink log activity. Modify the drink log activity to get gender and weight
@@ -55,8 +47,6 @@ public class LandingActivity extends AppCompatActivity {
         new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
 
         Intent intent = new Intent(this, DrinkLogActivity.class);
-        intent.putExtra(MainActivity.WEIGHT_MESSAGE, weight);
-        intent.putExtra(MainActivity.BODY_TYPE_MESSAGE, gender);
         startActivity(intent);
     }
 
