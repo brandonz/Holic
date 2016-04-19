@@ -75,8 +75,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         weight = pref.getInt("weight", 100); // default? should never go there
         gender = pref.getString("gender", "Male"); // default? also problematic lol
 
-        displayDrinks();
-        displayBAC();
+        refreshDisplay();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -105,14 +104,20 @@ public class DrinkLogActivity extends AppCompatActivity {
             r = 0.55; // L/kg
         System.out.println(r);
         double C = Math.max(0.8 * alc / (weight * 16 * r) - b * dt, 0);
-        if (C == 0)
-            bac_num_drinks = 0;
+        if (C == 0) {
+//            bac_num_drinks = 0;
+            // update baccalcindex on server
+            String formatString = "type=add&baccalcindex=%s";
+            String params = String.format(formatString, num_drinks);
+            new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                    AccessToken.getCurrentAccessToken().getUserId(), params);
+        }
         return C*100;
     }
 
     private void displayDrinks() {
-        new GetAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                AccessToken.getCurrentAccessToken().getUserId());
+        TextView textView = (TextView) findViewById(R.id.drinks_level);
+        textView.setText(String.format(getResources().getString(R.string.drinks_label), num_drinks));
     }
 
     private void displayBAC() {
@@ -133,28 +138,42 @@ public class DrinkLogActivity extends AppCompatActivity {
      * @param drinks
      */
     public void addDrinks(double drinks) {
-        if (bac_num_drinks == 0) {
-            millis = System.currentTimeMillis();
-        }
-        num_drinks += drinks;
-        bac_num_drinks += drinks;
-        displayDrinks();
-        displayBAC();
+        // server code
+        String formatString = "type=add&drinktime=%s&drinkamount=%s";
+        String params = String.format(formatString, System.currentTimeMillis(), drinks);
+        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                AccessToken.getCurrentAccessToken().getUserId(), params);
+
+//        if (bac_num_drinks == 0) {
+//            millis = System.currentTimeMillis();
+//        }
+//        num_drinks += drinks;
+//        bac_num_drinks += drinks;
+        refreshDisplay();
     }
 
     /**
      * Resets drink with no argument.
      */
     public void resetDrink() {
+        // TODO: connect to server
         num_drinks = 0;
         bac_num_drinks = 0;
         millis = 0;
-        displayDrinks();
-        displayBAC();
+        refreshDisplay();
     }
 
     public void refreshBAC(View view) {
-        displayBAC();
+        // displayBAC();
+        refreshDisplay();
+    }
+
+    public void refreshDisplay() {
+        // consolidating here to prep for asynchronous implementation
+//        displayDrinks();
+//        displayBAC();
+        new GetAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                AccessToken.getCurrentAccessToken().getUserId());
     }
 
     @Override
@@ -220,6 +239,21 @@ public class DrinkLogActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    //Async task to put new session info (e.g. set baccalcindex; add drinks)
+    private class PutAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Put(url[0], url[1]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+
+        }
+    }
+
+    // Async task to get current session info and update the display.
     private class GetAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... url) {
@@ -233,13 +267,28 @@ public class DrinkLogActivity extends AppCompatActivity {
                 if (obj.length() > 0) {
                     JSONObject session = obj.getJSONObject(0);
                     JSONArray drinkLogs = session.getJSONArray("drinklogs");
-                    double currDrinks = 0;
+                    int index = 0;
+                    long firstDrink = 0;
+                    try {
+                        index = session.getInt("baccalcindex");
+                    } catch(Exception e) {}
+                    try {
+                        firstDrink = drinkLogs.getJSONObject(index).getLong("drinktime");
+                    } catch(Exception e) {}
+                    double drinks = 0; // total number of drinks
+                    double bac_drinks = 0; // number of drinks for bac calc
                     for (int i = 0; i < drinkLogs.length(); i++) {
-                        currDrinks += drinkLogs.getJSONObject(i).getDouble("drinkamount");
+                        double amount = drinkLogs.getJSONObject(i).getDouble("drinkamount");
+                        drinks += amount;
+                        if (i >= index)
+                            bac_drinks += amount;
                     }
-                    TextView textView = (TextView) findViewById(R.id.drinks_level);
-                    textView.setText(String.format(getResources().getString(R.string.drinks_label),
-                            currDrinks));
+                    num_drinks = drinks;
+                    bac_num_drinks = bac_drinks;
+                    millis = firstDrink;
+
+                    displayDrinks();
+                    displayBAC();
                 } else {
                 }
             } catch(Exception e) {

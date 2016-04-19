@@ -58,7 +58,7 @@ public class RestClient {
 
     public static String Post(String urlString, String urlParams) {
         URL url;
-        HttpURLConnection con = null;
+        HttpsURLConnection con = null;
         try {
             url = new URL(urlString);
             con = (HttpsURLConnection) url.openConnection();
@@ -67,6 +67,7 @@ public class RestClient {
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", "Android");
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             // Send post request
             con.setDoOutput(true);
@@ -74,6 +75,12 @@ public class RestClient {
             wr.writeBytes(urlParams);
             wr.flush();
             wr.close();
+
+            // Debugging
+            int responseCode = con.getResponseCode();
+            System.out.println("\nSending 'POST' request to URL : " + url);
+            System.out.println("Parameters : " + urlParams);
+            System.out.println("Response Code : " + responseCode);
 
             // code to read the response. Should be the "User created!" message.
             // Leaving it here if we need the response later; currently does nothing after return.

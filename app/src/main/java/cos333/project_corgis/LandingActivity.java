@@ -44,10 +44,7 @@ public class LandingActivity extends AppCompatActivity {
         String formatString = "fbid=%s";
         String id = AccessToken.getCurrentAccessToken().getUserId();
         String urlParameters = String.format(formatString, id);
-        new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
-
-        Intent intent = new Intent(this, DrinkLogActivity.class);
-        startActivity(intent);
+        new PostAsyncTask().execute(getResources().getString(R.string.server_currsession), urlParameters);
     }
 
     // TODO: Open the settings activity.
@@ -93,6 +90,12 @@ public class LandingActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... url) {
             return RestClient.Post(url[0], url[1]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            Intent intent = new Intent(LandingActivity.this, DrinkLogActivity.class);
+            startActivity(intent);
         }
     }
 
