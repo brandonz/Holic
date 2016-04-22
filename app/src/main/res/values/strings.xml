@@ -43,7 +43,7 @@
     <string name="login_failed">Login attempt failed. Check your Internet connection.</string>
     <string name="title_activity_landing">Home</string>
     <string name="new_night">Start a new night!</string>
-    <string name="stats">Stats</string>
+    <string name="stats">Statistics</string>
     <string name="chats">Chat Rooms</string>
     <string name="logout">Logout</string>
     <string name="title_activity_settings">Settings</string>
