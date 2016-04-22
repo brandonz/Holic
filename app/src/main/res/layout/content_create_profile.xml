@@ -13,77 +13,143 @@
     tools:context="cos333.project_corgis.CreateProfile"
     tools:showIn="@layout/activity_create_profile">
 
-    <TextView
+
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text= "@string/create_profile"
-    android:id="@+id/create_profile_title"
-    android:layout_gravity="center_horizontal" />
+        android:id="@+id/scrollView" >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="@string/profile_firstname"
-        android:ems="10"
-        android:id="@+id/fname_edit"
-        android:layout_gravity="center_horizontal"
-        android:singleLine="false" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text= "@string/create_profile"
+                android:id="@+id/create_profile_title"
+                android:layout_gravity="center_horizontal" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/lname_edit"
-        android:hint="@string/profile_lastname" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/imageView" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/information_prompt"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="textPersonName"
+                android:text="@string/profile_firstname"
+                android:ems="10"
+                android:id="@+id/edit_fname"
+                android:layout_gravity="center_horizontal"
+                android:singleLine="false" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/weight_prompt"/>
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/edit_weight"
-        android:hint="@string/weight_hint"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="date"
+                android:ems="10"
+                android:id="@+id/edit_lname"
+                android:text="@string/profile_lastname" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/gender_prompt"
-        android:id="@+id/gender_prompt" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/information_prompt" />
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/gender_spinner" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weight_prompt" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/gender_disclaimer"
-        android:id="@+id/textView" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/edit_weight"
+                android:hint="@string/weight_hint" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/okay"
-        android:id="@+id/button_user_info"
-        android:onClick="sendInfo"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/gender_prompt"
+                android:id="@+id/gender_prompt" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/gender_spinner" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/gender_disclaimer"
+                android:id="@+id/textView" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_contact"
+                android:id="@+id/textView7"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="@string/contact_name"
+                android:ems="10"
+                android:id="@+id/edit_contact_name"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_number"
+                android:id="@+id/textView8"
+                android:layout_weight="1" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:ems="10"
+                android:id="@+id/edit_contact_num"
+                android:text="@string/sample_number"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_explain"
+                android:id="@+id/textView9"
+                android:layout_weight="1" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/okay"
+                android:id="@+id/button_user_info"
+                android:onClick="sendInfo" />
+        </LinearLayout>
+    </ScrollView>
+
 
 
 

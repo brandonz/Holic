@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cos333.project_corgis">
-
+    
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+
+    <!--Chat-->
+    <!-- needed for older devices -
+     used to check app background / foreground status -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <!-- START Added for GCM -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <permission
+        android:name="cos333.project_corgis.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="cos333.project_corgis.permission.C2D_MESSAGE" />
+    <!-- END Added for GCM -->
 
     <application
+        android:name=".chat.app.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/icon_2d_blue"
         android:label="@string/app_name"
@@ -27,15 +43,18 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter/ -->
         </activity>
+
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name">
             <intent-filter>
+
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".CreateProfile"
             android:label="@string/create_profile"
@@ -54,10 +73,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cos333.project_corgis.MainActivity" />
         </activity>
-        <!--
-             ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
-        -->
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -71,13 +88,11 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
 
-            <!--
-            intent-filter>
+            <!--intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter
-            -->
+            </intent-filter-->
 
         </activity>
         <activity
@@ -106,6 +121,62 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cos333.project_corgis.LandingActivity" />
         </activity>
+
+        <!--Chat-->
+        <activity
+            android:name=".chat.activity.ChatMainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity
+            android:name=".chat.activity.ChatLoginActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity
+            android:name=".chat.activity.ChatRoomActivity"
+            android:label="@string/title_activity_chat_room_discussion"
+            android:parentActivityName=".chat.activity.ChatMainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".chat.activity.ChatMainActivity" />
+        </activity>
+
+        <!-- START Added for GCM -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="cos333.project_corgis" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".chat.gcm.MyGcmPushReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".chat.gcm.GcmIntentService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <!-- END Added for GCM -->
     </application>
 
 </manifest>
