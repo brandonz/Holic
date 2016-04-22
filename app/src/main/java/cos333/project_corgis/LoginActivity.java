@@ -123,6 +123,8 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putString("id", AccessToken.getCurrentAccessToken().getUserId());
+                    editor.putString("fname", person.getString("fname"));
+                    editor.putString("lname", person.getString("lname"));
                     editor.putInt("weight", person.getInt("weight"));
                     editor.putString("gender", mfToGender(person.getString("gender")));
                     editor.apply();

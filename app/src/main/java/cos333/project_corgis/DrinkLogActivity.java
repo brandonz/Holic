@@ -110,7 +110,7 @@ public class DrinkLogActivity extends AppCompatActivity {
 
     private void displayDrinks() {
         TextView textView = (TextView) findViewById(R.id.drinks_level);
-        textView.setText(String.format(getResources().getString(R.string.drinks_label), num_drinks));
+        textView.setText(String.format(getResources().getString(R.string.drinks_label), bac_num_drinks));
     }
 
     private void displayBAC() {
@@ -161,6 +161,9 @@ public class DrinkLogActivity extends AppCompatActivity {
         refreshDisplay();
     }
 
+    /**
+     * Called to end a session. User is prompted whether or not to save the session.
+     */
     public void endSession() {
         AlertDialog.Builder builder  = new AlertDialog.Builder(this);
 
@@ -169,19 +172,23 @@ public class DrinkLogActivity extends AppCompatActivity {
         builder.setCancelable(true);
 
         builder.setPositiveButton(
-                R.string.okay,
+                R.string.yes,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
+                        String params = "type=end";
+                        new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId(), params);
+                    }
+                });
+
+        builder.setNegativeButton(R.string.no,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new DeleteAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId());
                     }
                 });
         builder.create().show();
-
-        // server code
-        String params = "type=end";
-        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                AccessToken.getCurrentAccessToken().getUserId(), params);
-        refreshDisplay();
     }
 
     public void refreshDisplay() {
@@ -253,6 +260,31 @@ public class DrinkLogActivity extends AppCompatActivity {
         }
     }
 
+    //Async task to delete the session without saving
+    private class DeleteAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Delete(url[0]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            DrinkLogActivity.this.finish();
+        }
+    }
+    //Async task to end and save night)
+    private class SaveNightAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Put(url[0], url[1]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            DrinkLogActivity.this.finish();
+        }
+    }
+
     //Async task to put new session info (e.g. set baccalcindex; add drinks)
     private class PutAsyncTask extends AsyncTask<String, Void, String> {
         @Override
@@ -298,6 +330,12 @@ public class DrinkLogActivity extends AppCompatActivity {
                     displayDrinks();
                     displayBAC();
                 } else {
+                    num_drinks = 0;
+                    bac_num_drinks = 0;
+                    millis = 0;
+
+                    displayDrinks();
+                    displayBAC();
                 }
             } catch(Exception e) {
             }

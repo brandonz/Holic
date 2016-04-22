@@ -94,6 +94,8 @@ public class RestClient {
             }
             in.close();
             String str_response = response.toString();
+            Log.d("Server response", str_response);
+            System.out.println(str_response);
             return str_response;
 
         } catch (Exception e) {
@@ -128,6 +130,12 @@ public class RestClient {
             wr.flush();
             wr.close();
 
+            // Debugging
+            int responseCode = con.getResponseCode();
+            System.out.println("\nSending 'PUT' request to URL : " + url);
+            System.out.println("Parameters : " + urlParams);
+            System.out.println("Response Code : " + responseCode);
+
             // code to read the response.
             // Leaving it here if we need the response later; currently does nothing after return.
             BufferedReader in = new BufferedReader(
@@ -140,6 +148,8 @@ public class RestClient {
             }
             in.close();
             String str_response = response.toString();
+            Log.d("Server response", str_response);
+            System.out.println(str_response);
             return str_response;
 
         } catch (Exception e) {
@@ -186,6 +196,8 @@ public class RestClient {
             }
             in.close();
             String str_response = response.toString();
+            Log.d("Server response", str_response);
+            System.out.println(str_response);
             return str_response;
 
         } catch (Exception e) {
