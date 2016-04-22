@@ -28,9 +28,9 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         setContentView(R.layout.activity_create_profile);
         Profile currProf = Profile.getCurrentProfile();
         super.onCreate(savedInstanceState);
-        EditText firstname = (EditText)findViewById(R.id.editText);
+        EditText firstname = (EditText)findViewById(R.id.edit_fname);
         firstname.setText(currProf.getFirstName());
-        EditText lastname = (EditText)findViewById(R.id.editText2);
+        EditText lastname = (EditText)findViewById(R.id.edit_lname);
         lastname.setText(currProf.getLastName());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -76,16 +76,19 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
             return;
         }
 
-        String formatString = "fbid=%s&fname=%s&lname=%s&weight=%s&gender=%s";
+        String formatString = "fbid=%s&fname=%s&lname=%s&weight=%s&gender=%s&contactname=%s&contactnumber=%s";
         String id = AccessToken.getCurrentAccessToken().getUserId();
-        Profile prof = Profile.getCurrentProfile();
-        String firstName = prof.getFirstName();
-        String lastName = prof.getLastName();
+        EditText editText2 = (EditText) findViewById(R.id.edit_fname);
+        String firstName = editText2.getText().toString();
+        EditText editText3 = (EditText) findViewById(R.id.edit_lname);
+        String lastName = editText3.getText().toString();
+        EditText editText4 = (EditText) findViewById(R.id.edit_contact_name);
+        String contactName = editText4.getText().toString();
+        EditText editText5 = (EditText) findViewById(R.id.edit_contact_num);
+        String contactNum = editText5.getText().toString();
         String urlParameters = String.format(formatString, id, firstName, lastName, weight,
-                toMF(body_type));
+                toMF(body_type), contactName, contactNum);
         new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
-
-
 
         intent.putExtra(WEIGHT_MESSAGE, weight);
         intent.putExtra(BODY_TYPE_MESSAGE, body_type);

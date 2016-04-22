@@ -45,7 +45,7 @@
                 android:inputType="textPersonName"
                 android:text="@string/profile_firstname"
                 android:ems="10"
-                android:id="@+id/editText"
+                android:id="@+id/edit_fname"
                 android:layout_gravity="center_horizontal"
                 android:singleLine="false" />
 
@@ -55,7 +55,7 @@
                 android:layout_weight="1"
                 android:inputType="date"
                 android:ems="10"
-                android:id="@+id/editText2"
+                android:id="@+id/edit_lname"
                 android:text="@string/profile_lastname" />
 
             <TextView
@@ -113,15 +113,31 @@
                 android:inputType="textPersonName"
                 android:text="@string/contact_name"
                 android:ems="10"
-                android:id="@+id/editText3" />
+                android:id="@+id/edit_contact_name"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_number"
+                android:id="@+id/textView8"
+                android:layout_weight="1" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="phone"
                 android:ems="10"
-                android:id="@+id/editText4"
-                android:text="@string/contact_number" />
+                android:id="@+id/edit_contact_num"
+                android:text="@string/sample_number"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_explain"
+                android:id="@+id/textView9"
+                android:layout_weight="1" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"

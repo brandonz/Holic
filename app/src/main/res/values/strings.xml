@@ -32,6 +32,10 @@
     <string name="enter_contact">Emergency Contact Info</string>
     <string name="contact_name">Contact Name</string>
     <string name="contact_number">Contact Phone Number</string>
+    <string name="sample_number">1234567890</string>
+    <string name="contact_explain">
+        Your emergency contact will be automatically texted if your BAC gets too high. Emergency
+    contact can be changed from the Settings menu.</string>
     <string name="create_profile">Profile Info</string>
     <string name="profile_firstname">First Name</string>
     <string name="profile_lastname">Last Name</string>
