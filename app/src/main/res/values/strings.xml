@@ -124,6 +124,5 @@
     <string name="err_msg_email">Enter valid email address</string>
     <string name="title_activity_chat_room_discussion">ChatRoomDiscussionActivity</string>
     <string name="action_logout">Logout</string>
-    <string name="title_activity_edit_profile">Edit Profile</string>
     <string name="title_activity_stats">Stats</string>
 </resources>
