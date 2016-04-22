@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="date"
+                android:inputType="textPersonName"
                 android:ems="10"
                 android:id="@+id/edit_lname"
                 android:text="@string/profile_lastname" />
@@ -138,39 +138,32 @@
                 android:id="@+id/textView9"
                 android:layout_weight="1" />
 
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="@string/okay"
-                android:id="@+id/button_user_info"
-                android:onClick="sendInfo" />
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/save"
+                    android:id="@+id/button_user_info"
+                    android:onClick="sendInfo"/>
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/cancel"
+                    android:id="@+id/button_cancel"
+                    android:onClick="goBack"/>
+
+
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
-    <RelativeLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="@string/save"
-            android:id="@+id/button_user_info"
-            android:onClick="sendInfo"/>
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="@string/cancel"
-            android:id="@+id/button_cancel"
-            android:onClick="goBack"/>
-
-
-    </RelativeLayout>
 </LinearLayout>
