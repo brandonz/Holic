@@ -10,7 +10,6 @@
     <string name="refresh_bac">Refresh</string>
     <string name="drinks_label">Number of drinks: %.1f</string>
     <string name="bac_label">BAC: %.3f</string>
-    <string name="threshold">0.08</string>
     <string name="reset_drink">Reset</string>
     <string name="end_night">End Night</string>
     <string name="end_night_confirm">Do you want to save your session?</string>
