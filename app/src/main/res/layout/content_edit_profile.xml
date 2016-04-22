@@ -77,12 +77,29 @@
         android:text="@string/gender_disclaimer"
         android:id="@+id/textView" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/okay"
-        android:id="@+id/button_user_info"
-        android:onClick="sendInfo"/>
+        android:layout_gravity="center_horizontal">
 
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/save"
+            android:id="@+id/button_user_info"
+            android:onClick="sendInfo"/>
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/cancel"
+            android:id="@+id/button_cancel"
+            android:onClick="goBack"/>
+
+
+    </RelativeLayout>
 </LinearLayout>

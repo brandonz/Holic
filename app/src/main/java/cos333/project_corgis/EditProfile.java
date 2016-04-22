@@ -69,6 +69,10 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
             gender_spinner.setSelection(1);
     }
 
+    public void goBack(View view) {
+        this.finish();
+    }
+
     public void sendInfo(View view) {
         Intent intent = new Intent(this, LandingActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_weight);

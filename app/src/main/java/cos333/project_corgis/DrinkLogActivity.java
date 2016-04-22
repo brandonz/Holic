@@ -190,6 +190,7 @@ public class DrinkLogActivity extends AppCompatActivity {
      * Called to end a session. User is prompted whether or not to save the session.
      */
     public void endSession() {
+        AlertDialog confirm;
         AlertDialog.Builder builder  = new AlertDialog.Builder(this);
 
         builder.setMessage(R.string.end_night_confirm);
@@ -213,7 +214,13 @@ public class DrinkLogActivity extends AppCompatActivity {
                                 AccessToken.getCurrentAccessToken().getUserId());
                     }
                 });
-        builder.create().show();
+        builder.setNeutralButton(R.string.cancel,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+        confirm = builder.create();
+        confirm.show();
     }
 
     public void refreshDisplay() {

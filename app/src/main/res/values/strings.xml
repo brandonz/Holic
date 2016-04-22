@@ -21,6 +21,8 @@
     <string name="okay">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save Changes</string>
     <string name="gender_prompt">Enter your body type:</string>
     <string-array name="gender_choices">
         <item>Male</item>
@@ -35,7 +37,7 @@
         should use the gender assigned at birth).
         </string>
     <string name="create_profile">Create Your Profile</string>
-    <string name="edit_profile">Edit Profile</string>
+    <string name="edit_profile">Profile</string>
     <string name="profile_firstname">First Name</string>
     <string name="profile_lastname">Last Name</string>
     <string name="title_activity_view_profile">View Profile</string>
@@ -105,6 +107,7 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_edit_profile">Edit Profile</string>
+
+    <string name="title_activity_edit_profile">Profile</string>
     <string name="title_activity_stats">Stats</string>
 </resources>

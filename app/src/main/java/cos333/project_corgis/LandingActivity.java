@@ -3,6 +3,7 @@ package cos333.project_corgis;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
@@ -18,6 +20,10 @@ import com.facebook.AccessToken;
 import com.facebook.Profile;
 
 public class LandingActivity extends AppCompatActivity {
+
+    // last click time of Start New Night, to prevent double clicks
+    private long mLastClickTime = 0;
+    Button nightButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +40,30 @@ public class LandingActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
+
+
+        nightButton = (Button) findViewById(R.id.new_night);
+        nightButton.setEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        nightButton.setEnabled(true);
     }
 
     // TODO: Open the drink log activity. Modify the drink log activity to get gender and weight
     // from the server instead of the other page.
     public void startDrinkActivity(View view) {
+        // Double-clicking prevention, using threshold of 1000 ms
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
+        // Disable future clicks.
+        nightButton.setEnabled(false);
+
         // This format string is hardcoded for now because I had problems with the & symbol in the
         // strings resources file lol. TODO: put it in the resources
         String formatString = "fbid=%s";
@@ -86,7 +111,7 @@ public class LandingActivity extends AppCompatActivity {
                 openLogout();
                 return true;
             case R.id.action_profile:
-                Intent intent = new Intent(this, ViewProfile.class);
+                Intent intent = new Intent(this, EditProfile.class);
                 startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
