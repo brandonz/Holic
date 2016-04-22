@@ -50,7 +50,7 @@
     <string name="login_failed">Login attempt failed. Check your Internet connection.</string>
     <string name="title_activity_landing">Home</string>
     <string name="new_night">Start a new night!</string>
-    <string name="stats">Stats</string>
+    <string name="stats">Statistics</string>
     <string name="chats">Chat Rooms</string>
     <string name="logout">Logout</string>
     <string name="title_activity_settings">Settings</string>
@@ -112,5 +112,14 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <!--For chat-->
+    <string name="title_activity_login">ChatLoginActivity</string>
+    <string name="hint_name">Full Name</string>
+    <string name="hint_email">Email</string>
+    <string name="err_msg_name">Enter full name</string>
+    <string name="err_msg_email">Enter valid email address</string>
+    <string name="title_activity_chat_room_discussion">ChatRoomDiscussionActivity</string>
+    <string name="action_logout">Logout</string>
     <string name="title_activity_edit_profile">Edit Profile</string>
+    <string name="title_activity_stats">Stats</string>
 </resources>
