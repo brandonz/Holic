@@ -29,7 +29,10 @@
         most accurately reflects your body type (e.g. transgender people who have not taken hormones
         should use the gender assigned at birth).
         </string>
-    <string name="create_profile">Create Your Profile</string>
+    <string name="enter_contact">Emergency Contact Info</string>
+    <string name="contact_name">Contact Name</string>
+    <string name="contact_number">Contact Phone Number</string>
+    <string name="create_profile">Profile Info</string>
     <string name="profile_firstname">First Name</string>
     <string name="profile_lastname">Last Name</string>
     <string name="title_activity_view_profile">ViewProfile</string>
