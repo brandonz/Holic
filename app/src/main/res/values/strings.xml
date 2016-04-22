@@ -34,6 +34,13 @@
         most accurately reflects your body type (e.g. transgender people who have not taken hormones
         should use the gender assigned at birth).
         </string>
+    <string name="enter_contact">Emergency Contact Info</string>
+    <string name="contact_name">Contact Name</string>
+    <string name="contact_number">Contact Phone Number</string>
+    <string name="sample_number">1234567890</string>
+    <string name="contact_explain">
+        Your emergency contact will be automatically texted if your BAC gets too high. Emergency
+    contact can be changed from the Settings menu.</string>
     <string name="create_profile">Create Your Profile</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="profile_firstname">First Name</string>
@@ -105,6 +112,14 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <!--For chat-->
+    <string name="title_activity_login">ChatLoginActivity</string>
+    <string name="hint_name">Full Name</string>
+    <string name="hint_email">Email</string>
+    <string name="err_msg_name">Enter full name</string>
+    <string name="err_msg_email">Enter valid email address</string>
+    <string name="title_activity_chat_room_discussion">ChatRoomDiscussionActivity</string>
+    <string name="action_logout">Logout</string>
     <string name="title_activity_edit_profile">Edit Profile</string>
     <string name="title_activity_stats">Stats</string>
 </resources>

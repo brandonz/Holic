@@ -34,13 +34,19 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
         String lname = pref.getString("lname", "");
         int weight = pref.getInt("weight", 100); // default? should never go there
         String gender = pref.getString("gender", "Male"); // default? also problematic lol
+        String contactname = pref.getString("contact", "");
+        String contactnum = pref.getString("contactnum", "");
 
-        EditText firstname = (EditText) findViewById(R.id.fname_edit);
+        EditText firstname = (EditText) findViewById(R.id.edit_fname);
         firstname.setText(fname);
-        EditText lastname = (EditText) findViewById(R.id.lname_edit);
+        EditText lastname = (EditText) findViewById(R.id.edit_lname);
         lastname.setText(lname);
         EditText weightEdit = (EditText) findViewById(R.id.edit_weight);
         weightEdit.setText(Integer.toString(weight));
+        EditText contactNameEdit = (EditText) findViewById(R.id.edit_contact_name);
+        contactNameEdit.setText(contactname);
+        EditText contactNumEdit = (EditText) findViewById(R.id.edit_contact_num);
+        contactNumEdit.setText(contactnum);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -91,12 +97,18 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
 
             return;
         }
-        // save stuff locally
+
         String id = AccessToken.getCurrentAccessToken().getUserId();
-        EditText fnameEdit =(EditText) findViewById(R.id.fname_edit);
-        EditText lnameEdit =(EditText) findViewById(R.id.lname_edit);
-        String firstName = fnameEdit.getText().toString();
-        String lastName = lnameEdit.getText().toString();
+        EditText editText2 = (EditText) findViewById(R.id.edit_fname);
+        String firstName = editText2.getText().toString();
+        EditText editText3 = (EditText) findViewById(R.id.edit_lname);
+        String lastName = editText3.getText().toString();
+        EditText editText4 = (EditText) findViewById(R.id.edit_contact_name);
+        String contactName = editText4.getText().toString();
+        EditText editText5 = (EditText) findViewById(R.id.edit_contact_num);
+        String contactNum = editText5.getText().toString();
+
+        // save stuff locally
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("id", id);
@@ -104,11 +116,13 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
         editor.putString("lname", lastName);
         editor.putInt("weight", Integer.parseInt(weight));
         editor.putString("gender", body_type);
+        editor.putString("contact", contactName);
+        editor.putString("contactnum", contactNum);
         editor.apply();
 
-        String formatString = "type=add&fbid=%s&fname=%s&lname=%s&weight=%s&gender=%s";
+        String formatString = "fbid=%s&fname=%s&lname=%s&weight=%s&gender=%s&contactname=%s&contactnumber=%s";
         String urlParameters = String.format(formatString, id, firstName, lastName, weight,
-                toMF(body_type));
+                toMF(body_type), contactName, contactNum);
         new PutAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
 
         startActivity(intent);

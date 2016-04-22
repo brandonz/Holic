@@ -17,6 +17,8 @@ import com.facebook.login.LoginManager;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 
+import cos333.project_corgis.chat.activity.ChatMainActivity;
+
 public class LandingActivity extends AppCompatActivity {
 
     @Override
@@ -47,6 +49,11 @@ public class LandingActivity extends AppCompatActivity {
         new PostAsyncTask().execute(getResources().getString(R.string.server_currsession), urlParameters);
     }
 
+    public void startChatActivity(View view) {
+        startActivity(new Intent(this, ChatMainActivity.class));
+    }
+
+    // TODO: Open the settings activity.
     public void openSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);

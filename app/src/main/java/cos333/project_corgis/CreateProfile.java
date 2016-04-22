@@ -27,9 +27,9 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_profile);
         Profile currProf = Profile.getCurrentProfile();
-        EditText firstname = (EditText)findViewById(R.id.fname_edit);
+        EditText firstname = (EditText)findViewById(R.id.edit_fname);
         firstname.setText(currProf.getFirstName());
-        EditText lastname = (EditText)findViewById(R.id.lname_edit);
+        EditText lastname = (EditText)findViewById(R.id.edit_lname);
         lastname.setText(currProf.getLastName());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -74,12 +74,16 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
 
             return;
         }
-
+        
         String id = AccessToken.getCurrentAccessToken().getUserId();
-        EditText fnameEdit =(EditText) findViewById(R.id.fname_edit);
-        EditText lnameEdit =(EditText) findViewById(R.id.lname_edit);
-        String firstName = fnameEdit.getText().toString();
-        String lastName = lnameEdit.getText().toString();
+        EditText editText2 = (EditText) findViewById(R.id.edit_fname);
+        String firstName = editText2.getText().toString();
+        EditText editText3 = (EditText) findViewById(R.id.edit_lname);
+        String lastName = editText3.getText().toString();
+        EditText editText4 = (EditText) findViewById(R.id.edit_contact_name);
+        String contactName = editText4.getText().toString();
+        EditText editText5 = (EditText) findViewById(R.id.edit_contact_num);
+        String contactNum = editText5.getText().toString();
 
         // Save stuff locally
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -89,12 +93,14 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         editor.putString("lname", lastName);
         editor.putInt("weight", Integer.parseInt(weight));
         editor.putString("gender", body_type);
+        editor.putString("contact", contactName);
+        editor.putString("contactnum", contactNum);
         editor.apply();
 
         // Send info to the server
-        String formatString = "fbid=%s&fname=%s&lname=%s&weight=%s&gender=%s";
+        String formatString = "fbid=%s&fname=%s&lname=%s&weight=%s&gender=%s&contactname=%s&contactnumber=%s";
         String urlParameters = String.format(formatString, id, firstName, lastName, weight,
-                toMF(body_type));
+                toMF(body_type), contactName, contactNum);
         new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
         // create empty pastsession
         String idParam = String.format("fbid=%s", id);
