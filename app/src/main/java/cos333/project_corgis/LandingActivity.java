@@ -47,7 +47,6 @@ public class LandingActivity extends AppCompatActivity {
         new PostAsyncTask().execute(getResources().getString(R.string.server_currsession), urlParameters);
     }
 
-    // TODO: Open the settings activity.
     public void openSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
@@ -80,6 +79,10 @@ public class LandingActivity extends AppCompatActivity {
                 return true;
             case R.id.action_logout:
                 openLogout();
+                return true;
+            case R.id.action_profile:
+                Intent intent = new Intent(this, ViewProfile.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

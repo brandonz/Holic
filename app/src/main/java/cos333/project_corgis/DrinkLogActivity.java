@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,8 +25,7 @@ import org.json.JSONObject;
 
 
 public class DrinkLogActivity extends AppCompatActivity {
-    // When BAC calculations are implemented this won't suffice.
-    // We will need timestamps for each button press.
+    // Total number of drinks
     private double num_drinks = 0;
 
     // Variables for BAC Calculation.
@@ -39,8 +39,6 @@ public class DrinkLogActivity extends AppCompatActivity {
     // User-entered gender. To be used in BAC calculations. Will have a value from
     // @strings/gender_choices
     private String gender;
-    //global variable for BAC value
-    private double BAC;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -64,11 +62,6 @@ public class DrinkLogActivity extends AppCompatActivity {
 //            }
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-//        Intent intent = getIntent();
-//        String s_weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
-//        weight = s_weight.isEmpty() ? 0 : Integer.parseInt(s_weight);
-//        gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         // 0 - for private mode
@@ -117,7 +110,7 @@ public class DrinkLogActivity extends AppCompatActivity {
 
     private void displayDrinks() {
         TextView textView = (TextView) findViewById(R.id.drinks_level);
-        textView.setText(String.format(getResources().getString(R.string.drinks_label), num_drinks));
+        textView.setText(String.format(getResources().getString(R.string.drinks_label), bac_num_drinks));
     }
 
     private void displayBAC() {
@@ -168,10 +161,37 @@ public class DrinkLogActivity extends AppCompatActivity {
         refreshDisplay();
     }
 
+    /**
+     * Called to end a session. User is prompted whether or not to save the session.
+     */
+    public void endSession() {
+        AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+        builder.setMessage(R.string.end_night_confirm);
+        builder.setTitle(R.string.end_night);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String params = "type=end";
+                        new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId(), params);
+                    }
+                });
+
+        builder.setNegativeButton(R.string.no,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new DeleteAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId());
+                    }
+                });
+        builder.create().show();
+    }
+
     public void refreshDisplay() {
-        // consolidating here to prep for asynchronous implementation
-//        displayDrinks();
-//        displayBAC();
         new GetAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                 AccessToken.getCurrentAccessToken().getUserId());
     }
@@ -233,10 +253,35 @@ public class DrinkLogActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.reset_drink:
-                resetDrink();
+                endSession();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //Async task to delete the session without saving
+    private class DeleteAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Delete(url[0]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            DrinkLogActivity.this.finish();
+        }
+    }
+    //Async task to end and save night)
+    private class SaveNightAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Put(url[0], url[1]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            DrinkLogActivity.this.finish();
         }
     }
 
@@ -245,11 +290,6 @@ public class DrinkLogActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... url) {
             return RestClient.Put(url[0], url[1]);
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-
         }
     }
 
@@ -290,6 +330,12 @@ public class DrinkLogActivity extends AppCompatActivity {
                     displayDrinks();
                     displayBAC();
                 } else {
+                    num_drinks = 0;
+                    bac_num_drinks = 0;
+                    millis = 0;
+
+                    displayDrinks();
+                    displayBAC();
                 }
             } catch(Exception e) {
             }

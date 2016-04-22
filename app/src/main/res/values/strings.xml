@@ -10,12 +10,16 @@
     <string name="drinks_label">Number of drinks: %.1f</string>
     <string name="bac_label">BAC: %.3f</string>
     <string name="reset_drink">Reset</string>
+    <string name="end_night">End Night</string>
+    <string name="end_night_confirm">Do you want to save your session?</string>
     <string name="title_activity_drink_log">Drink Logging</string>
     <string name="information_prompt">
         To help us keep better track of your BAC, enter your information.</string>
     <string name="weight_prompt">Enter your weight in lbs:</string>
     <string name="weight_hint">e.g. 150</string>
     <string name="okay">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="gender_prompt">Enter your body type:</string>
     <string-array name="gender_choices">
         <item>Male</item>
@@ -37,13 +41,17 @@
         Your emergency contact will be automatically texted if your BAC gets too high. Emergency
     contact can be changed from the Settings menu.</string>
     <string name="create_profile">Profile Info</string>
+    <string name="edit_profile">Edit Profile</string>
     <string name="profile_firstname">First Name</string>
     <string name="profile_lastname">Last Name</string>
-    <string name="title_activity_view_profile">ViewProfile</string>
+    <string name="title_activity_view_profile">View Profile</string>
+    <string name="login_cancel">Login attempt cancelled. Check your Internet connection.</string>
+    <string name="login_failed">Login attempt failed. Check your Internet connection.</string>
     <string name="title_activity_landing">Home</string>
     <string name="new_night">Start a new night!</string>
     <string name="stats">Stats</string>
     <string name="chats">Chat Rooms</string>
+    <string name="logout">Logout</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
@@ -103,4 +111,5 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_edit_profile">Edit Profile</string>
 </resources>

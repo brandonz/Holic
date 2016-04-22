@@ -11,9 +11,15 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_profile"
+        android:orderInCategory="1"
+        android:title= "@string/title_activity_view_profile"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_logout"
-        android:orderInCategory="100"
-        android:title="Logout"
+        android:orderInCategory="1"
+        android:title= "@string/logout"
         app:showAsAction="never" />
 
 </menu>
