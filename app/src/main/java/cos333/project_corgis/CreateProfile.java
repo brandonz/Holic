@@ -60,8 +60,8 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         if (weight.isEmpty() || Integer.parseInt(weight) == 0 || Integer.parseInt(weight) > 1000) {
             AlertDialog.Builder builder  = new AlertDialog.Builder(this);
 
-            builder.setMessage("Please give a valid weight");
-            builder.setTitle("Error Message");
+            builder.setMessage(R.string.enter_valid_weight);
+            builder.setTitle(R.string.error_message);
             builder.setCancelable(true);
 
             builder.setPositiveButton(

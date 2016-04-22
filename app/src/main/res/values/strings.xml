@@ -10,6 +10,8 @@
     <string name="drinks_label">Number of drinks: %.1f</string>
     <string name="bac_label">BAC: %.3f</string>
     <string name="reset_drink">Reset</string>
+    <string name="end_night">End Night</string>
+    <string name="end_night_confirm">Your session will be saved.</string>
     <string name="title_activity_drink_log">Drink Logging</string>
     <string name="information_prompt">
         To help us keep better track of your BAC, enter your information.</string>
@@ -33,10 +35,13 @@
     <string name="profile_firstname">First Name</string>
     <string name="profile_lastname">Last Name</string>
     <string name="title_activity_view_profile">ViewProfile</string>
+    <string name="login_cancel">Login attempt cancelled. Check your Internet connection.</string>
+    <string name="login_failed">Login attempt failed. Check your Internet connection.</string>
     <string name="title_activity_landing">Home</string>
     <string name="new_night">Start a new night!</string>
     <string name="stats">Stats</string>
     <string name="chats">Chat Rooms</string>
+    <string name="logout">Logout</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->

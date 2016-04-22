@@ -61,12 +61,12 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                info.setText("Login attempt canceled.");
+                info.setText(R.string.login_cancel);
             }
 
             @Override
             public void onError(FacebookException e) {
-                info.setText("Login attempt failed.");
+                info.setText(R.string.login_failed);
             }
         });
     }
@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("id", AccessToken.getCurrentAccessToken().getUserId());
                     editor.putInt("weight", person.getInt("weight"));
                     editor.putString("gender", mfToGender(person.getString("gender")));
-                    editor.commit();
+                    editor.apply();
                     startActivity(landing);
                 } else {
                     final Intent newUserScreen = new Intent(LoginActivity.this, CreateProfile.class);

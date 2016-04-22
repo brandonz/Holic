@@ -6,7 +6,7 @@
     <item
         android:id="@+id/reset_drink"
         android:orderInCategory="100"
-        android:title="@string/reset_drink"
+        android:title="@string/end_night"
         app:showAsAction="never" />
 
 </menu>

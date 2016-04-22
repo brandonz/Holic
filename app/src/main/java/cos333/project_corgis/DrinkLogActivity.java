@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,8 +25,7 @@ import org.json.JSONObject;
 
 
 public class DrinkLogActivity extends AppCompatActivity {
-    // When BAC calculations are implemented this won't suffice.
-    // We will need timestamps for each button press.
+    // Total number of drinks
     private double num_drinks = 0;
 
     // Variables for BAC Calculation.
@@ -39,8 +39,6 @@ public class DrinkLogActivity extends AppCompatActivity {
     // User-entered gender. To be used in BAC calculations. Will have a value from
     // @strings/gender_choices
     private String gender;
-    //global variable for BAC value
-    private double BAC;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -64,11 +62,6 @@ public class DrinkLogActivity extends AppCompatActivity {
 //            }
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-//        Intent intent = getIntent();
-//        String s_weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
-//        weight = s_weight.isEmpty() ? 0 : Integer.parseInt(s_weight);
-//        gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         // 0 - for private mode
@@ -168,10 +161,30 @@ public class DrinkLogActivity extends AppCompatActivity {
         refreshDisplay();
     }
 
+    public void endSession() {
+        AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+        builder.setMessage(R.string.end_night_confirm);
+        builder.setTitle(R.string.end_night);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                R.string.okay,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        builder.create().show();
+
+        // server code
+        String params = "type=end";
+        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                AccessToken.getCurrentAccessToken().getUserId(), params);
+        refreshDisplay();
+    }
+
     public void refreshDisplay() {
-        // consolidating here to prep for asynchronous implementation
-//        displayDrinks();
-//        displayBAC();
         new GetAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                 AccessToken.getCurrentAccessToken().getUserId());
     }
@@ -233,7 +246,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.reset_drink:
-                resetDrink();
+                endSession();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -245,11 +258,6 @@ public class DrinkLogActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... url) {
             return RestClient.Put(url[0], url[1]);
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-
         }
     }
 

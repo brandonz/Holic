@@ -47,7 +47,6 @@ public class LandingActivity extends AppCompatActivity {
         new PostAsyncTask().execute(getResources().getString(R.string.server_currsession), urlParameters);
     }
 
-    // TODO: Open the settings activity.
     public void openSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
