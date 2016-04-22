@@ -35,6 +35,14 @@ public class DrinkLogActivity extends AppCompatActivity {
     // time of first drink.
     private long millis = 0;
 
+    // Variables for server-based BAC calculation.
+    // amount of latest drink
+    private double drinkAmount = 0;
+    // time of latest drink
+    private long drinkTime = 0;
+    // Flag to use latest values in BAC calculation
+    private boolean newDrinkFlag = false;
+
     // User-entered weight. To be used in BAC calculations.
     private int weight;
     // User-entered gender. To be used in BAC calculations. Will have a value from
@@ -90,6 +98,14 @@ public class DrinkLogActivity extends AppCompatActivity {
      * Calculate the BAC level
      */
     private double calcBAC() {
+        if (newDrinkFlag) {
+            num_drinks += drinkAmount;
+            bac_num_drinks += drinkAmount;
+            if (millis == 0) {
+                millis = drinkTime;
+            }
+        }
+
         if (millis == 0)
             return 0;
 
@@ -111,12 +127,23 @@ public class DrinkLogActivity extends AppCompatActivity {
         if (C == 0) {
 //            bac_num_drinks = 0;
             // update baccalcindex on server
-            String formatString = "type=add&baccalcindex=%s";
-            String params = String.format(formatString, num_drinks);
+//            String formatString = "type=add&baccalcindex=%s";
+//            String params = String.format(formatString, num_drinks);
+//            new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+//                    AccessToken.getCurrentAccessToken().getUserId(), params);
+        }
+        double bac = C*100;
+
+        if (newDrinkFlag) {
+            // server code to put the new information
+            String formatString = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
+            String params = String.format(formatString, drinkTime, drinkAmount, bac);
             new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                     AccessToken.getCurrentAccessToken().getUserId(), params);
+            newDrinkFlag = false;
         }
-        return C*100;
+
+        return bac;
     }
 
     private void displayDrinks() {
@@ -154,11 +181,9 @@ public class DrinkLogActivity extends AppCompatActivity {
      * @param drinks
      */
     public void addDrinks(double drinks) {
-        // server code
-        String formatString = "type=add&drinktime=%s&drinkamount=%s";
-        String params = String.format(formatString, System.currentTimeMillis(), drinks);
-        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                AccessToken.getCurrentAccessToken().getUserId(), params);
+        drinkAmount = drinks;
+        drinkTime = System.currentTimeMillis();
+        newDrinkFlag = true;
 
 //        if (bac_num_drinks == 0) {
 //            millis = System.currentTimeMillis();
@@ -295,7 +320,7 @@ public class DrinkLogActivity extends AppCompatActivity {
             DrinkLogActivity.this.finish();
         }
     }
-    //Async task to end and save night)
+    //Async task to end and save night
     private class SaveNightAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... url) {
@@ -349,16 +374,15 @@ public class DrinkLogActivity extends AppCompatActivity {
                     num_drinks = drinks;
                     bac_num_drinks = bac_drinks;
                     millis = firstDrink;
-
-                    displayDrinks();
                     displayBAC();
-                } else {
+                    displayDrinks();
+                } else { // no such session! shouldn't happen, set to 0 in case
                     num_drinks = 0;
                     bac_num_drinks = 0;
                     millis = 0;
 
-                    displayDrinks();
                     displayBAC();
+                    displayDrinks();
                 }
             } catch(Exception e) {
             }
