@@ -93,6 +93,8 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         editor.putString("lname", lastName);
         editor.putInt("weight", Integer.parseInt(weight));
         editor.putString("gender", body_type);
+        editor.putString("contact", contactName);
+        editor.putString("contactnum", contactNum);
         editor.apply();
 
         // Send info to the server
