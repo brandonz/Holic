@@ -2,11 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="cos333.project_corgis.DrinkLogActivity">
+    tools:context="cos333.project_corgis.ViewProfile">
+
     <item
-        android:id="@+id/reset_drink"
-        android:orderInCategory="100"
-        android:title="@string/end_night"
+        android:id="@+id/action_profile"
+        android:orderInCategory="1"
+        android:title= "@string/edit_profile"
         app:showAsAction="never" />
+
 
 </menu>

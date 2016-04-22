@@ -94,6 +94,8 @@ public class RestClient {
             }
             in.close();
             String str_response = response.toString();
+            Log.d("Server response", str_response);
+            System.out.println(str_response);
             return str_response;
 
         } catch (Exception e) {
@@ -128,6 +130,12 @@ public class RestClient {
             wr.flush();
             wr.close();
 
+            // Debugging
+            int responseCode = con.getResponseCode();
+            System.out.println("\nSending 'PUT' request to URL : " + url);
+            System.out.println("Parameters : " + urlParams);
+            System.out.println("Response Code : " + responseCode);
+
             // code to read the response.
             // Leaving it here if we need the response later; currently does nothing after return.
             BufferedReader in = new BufferedReader(
@@ -140,6 +148,8 @@ public class RestClient {
             }
             in.close();
             String str_response = response.toString();
+            Log.d("Server response", str_response);
+            System.out.println(str_response);
             return str_response;
 
         } catch (Exception e) {
@@ -154,5 +164,52 @@ public class RestClient {
         }
         return null;
 
+    }
+
+    public static String Delete(String urlString) {
+        URL url;
+        HttpsURLConnection con = null;
+        try {
+            url = new URL(urlString);
+            con = (HttpsURLConnection) url.openConnection();
+
+            //add request header
+            con.setRequestMethod("DELETE");
+            con.setRequestProperty("User-Agent", "Android");
+            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            // Debugging
+            int responseCode = con.getResponseCode();
+            System.out.println("\nSending 'DELETE' request to URL : " + url);
+            System.out.println("Response Code : " + responseCode);
+
+            // code to read the response. Should be the "User created!" message.
+            // Leaving it here if we need the response later; currently does nothing after return.
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            String str_response = response.toString();
+            Log.d("Server response", str_response);
+            System.out.println(str_response);
+            return str_response;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        } finally {
+
+            if (con != null) {
+                con.disconnect();
+            }
+        }
+        return null;
     }
 }

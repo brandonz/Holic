@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="getName"
-        android:id="@+id/textView4"
+        android:id="@+id/prof_name"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -47,10 +47,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="getWeight"
-        android:id="@+id/textView5"
-        android:layout_below="@+id/textView4"
-        android:layout_alignLeft="@+id/textView4"
-        android:layout_alignStart="@+id/textView4"
+        android:id="@+id/prof_weight"
+        android:layout_below="@+id/prof_name"
+        android:layout_alignLeft="@+id/prof_name"
+        android:layout_alignStart="@+id/prof_name"
         android:layout_marginTop="33dp" />
 
     <TextView
@@ -58,9 +58,9 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="getGender"
-        android:id="@+id/textView6"
-        android:layout_below="@+id/textView5"
-        android:layout_alignLeft="@+id/textView5"
-        android:layout_alignStart="@+id/textView5" />
+        android:id="@+id/prof_gender"
+        android:layout_below="@+id/prof_weight"
+        android:layout_alignLeft="@+id/prof_weight"
+        android:layout_alignStart="@+id/prof_weight" />
 
 </RelativeLayout>

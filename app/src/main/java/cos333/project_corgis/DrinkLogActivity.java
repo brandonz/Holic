@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,8 +25,7 @@ import org.json.JSONObject;
 
 
 public class DrinkLogActivity extends AppCompatActivity {
-    // When BAC calculations are implemented this won't suffice.
-    // We will need timestamps for each button press.
+    // Total number of drinks
     private double num_drinks = 0;
 
     // Variables for BAC Calculation.
@@ -34,13 +34,19 @@ public class DrinkLogActivity extends AppCompatActivity {
     // time of first drink.
     private long millis = 0;
 
+    // Variables for server-based BAC calculation.
+    // amount of latest drink
+    private double drinkAmount = 0;
+    // time of latest drink
+    private long drinkTime = 0;
+    // Flag to use latest values in BAC calculation
+    private boolean newDrinkFlag = false;
+
     // User-entered weight. To be used in BAC calculations.
     private int weight;
     // User-entered gender. To be used in BAC calculations. Will have a value from
     // @strings/gender_choices
     private String gender;
-    //global variable for BAC value
-    private double BAC;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -65,11 +71,6 @@ public class DrinkLogActivity extends AppCompatActivity {
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        Intent intent = getIntent();
-//        String s_weight = intent.getStringExtra(MainActivity.WEIGHT_MESSAGE);
-//        weight = s_weight.isEmpty() ? 0 : Integer.parseInt(s_weight);
-//        gender = intent.getStringExtra(MainActivity.BODY_TYPE_MESSAGE);
-
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         // 0 - for private mode
         weight = pref.getInt("weight", 100); // default? should never go there
@@ -86,6 +87,14 @@ public class DrinkLogActivity extends AppCompatActivity {
      * Calculate the BAC level
      */
     private double calcBAC() {
+        if (newDrinkFlag) {
+            num_drinks += drinkAmount;
+            bac_num_drinks += drinkAmount;
+            if (millis == 0) {
+                millis = drinkTime;
+            }
+        }
+
         if (millis == 0)
             return 0;
 
@@ -107,17 +116,28 @@ public class DrinkLogActivity extends AppCompatActivity {
         if (C == 0) {
 //            bac_num_drinks = 0;
             // update baccalcindex on server
-            String formatString = "type=add&baccalcindex=%s";
-            String params = String.format(formatString, num_drinks);
+//            String formatString = "type=add&baccalcindex=%s";
+//            String params = String.format(formatString, num_drinks);
+//            new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+//                    AccessToken.getCurrentAccessToken().getUserId(), params);
+        }
+        double bac = C*100;
+
+        if (newDrinkFlag) {
+            // server code to put the new information
+            String formatString = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
+            String params = String.format(formatString, drinkTime, drinkAmount, bac);
             new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                     AccessToken.getCurrentAccessToken().getUserId(), params);
+            newDrinkFlag = false;
         }
-        return C*100;
+
+        return bac;
     }
 
     private void displayDrinks() {
         TextView textView = (TextView) findViewById(R.id.drinks_level);
-        textView.setText(String.format(getResources().getString(R.string.drinks_label), num_drinks));
+        textView.setText(String.format(getResources().getString(R.string.drinks_label), bac_num_drinks));
     }
 
     private void displayBAC() {
@@ -138,11 +158,9 @@ public class DrinkLogActivity extends AppCompatActivity {
      * @param drinks
      */
     public void addDrinks(double drinks) {
-        // server code
-        String formatString = "type=add&drinktime=%s&drinkamount=%s";
-        String params = String.format(formatString, System.currentTimeMillis(), drinks);
-        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                AccessToken.getCurrentAccessToken().getUserId(), params);
+        drinkAmount = drinks;
+        drinkTime = System.currentTimeMillis();
+        newDrinkFlag = true;
 
 //        if (bac_num_drinks == 0) {
 //            millis = System.currentTimeMillis();
@@ -168,10 +186,37 @@ public class DrinkLogActivity extends AppCompatActivity {
         refreshDisplay();
     }
 
+    /**
+     * Called to end a session. User is prompted whether or not to save the session.
+     */
+    public void endSession() {
+        AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+        builder.setMessage(R.string.end_night_confirm);
+        builder.setTitle(R.string.end_night);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String params = "type=end";
+                        new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId(), params);
+                    }
+                });
+
+        builder.setNegativeButton(R.string.no,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new DeleteAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId());
+                    }
+                });
+        builder.create().show();
+    }
+
     public void refreshDisplay() {
-        // consolidating here to prep for asynchronous implementation
-//        displayDrinks();
-//        displayBAC();
         new GetAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                 AccessToken.getCurrentAccessToken().getUserId());
     }
@@ -233,10 +278,35 @@ public class DrinkLogActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.reset_drink:
-                resetDrink();
+                endSession();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //Async task to delete the session without saving
+    private class DeleteAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Delete(url[0]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            DrinkLogActivity.this.finish();
+        }
+    }
+    //Async task to end and save night
+    private class SaveNightAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Put(url[0], url[1]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            DrinkLogActivity.this.finish();
         }
     }
 
@@ -245,11 +315,6 @@ public class DrinkLogActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... url) {
             return RestClient.Put(url[0], url[1]);
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-
         }
     }
 
@@ -286,10 +351,15 @@ public class DrinkLogActivity extends AppCompatActivity {
                     num_drinks = drinks;
                     bac_num_drinks = bac_drinks;
                     millis = firstDrink;
-
-                    displayDrinks();
                     displayBAC();
-                } else {
+                    displayDrinks();
+                } else { // no such session! shouldn't happen, set to 0 in case
+                    num_drinks = 0;
+                    bac_num_drinks = 0;
+                    millis = 0;
+
+                    displayBAC();
+                    displayDrinks();
                 }
             } catch(Exception e) {
             }
