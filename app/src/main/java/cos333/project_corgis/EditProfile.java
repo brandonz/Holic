@@ -97,7 +97,7 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
 
             return;
         }
-
+        // save stuff locally
         String id = AccessToken.getCurrentAccessToken().getUserId();
         EditText editText2 = (EditText) findViewById(R.id.edit_fname);
         String firstName = editText2.getText().toString();
@@ -120,10 +120,10 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
         editor.putString("contactnum", contactNum);
         editor.apply();
 
-        String formatString = "fbid=%s&fname=%s&lname=%s&weight=%s&gender=%s&contactname=%s&contactnumber=%s";
-        String urlParameters = String.format(formatString, id, firstName, lastName, weight,
+        String formatString = "type=add&fname=%s&lname=%s&weight=%s&gender=%s&contactname=%s&contactnumber=%s";
+        String urlParameters = String.format(formatString, firstName, lastName, weight,
                 toMF(body_type), contactName, contactNum);
-        new PutAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
+        new PutAsyncTask().execute(getResources().getString(R.string.server)+ id, urlParameters);
 
         startActivity(intent);
     }

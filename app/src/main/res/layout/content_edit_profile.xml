@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="date"
+                android:inputType="textPersonName"
                 android:ems="10"
                 android:id="@+id/edit_lname"
                 android:text="@string/profile_lastname" />

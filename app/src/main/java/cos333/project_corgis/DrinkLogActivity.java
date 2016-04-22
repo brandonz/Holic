@@ -175,6 +175,7 @@ public class DrinkLogActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean("hasTexted", true);
             editor.apply();
+            hasTexted = true;
 
             try {
                 emergency.sendMultipartTextMessage(num, null, emergency.divideMessage(message), null, null);
