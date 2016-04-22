@@ -96,7 +96,9 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         String urlParameters = String.format(formatString, id, firstName, lastName, weight,
                 toMF(body_type));
         new PostAsyncTask().execute(getResources().getString(R.string.server), urlParameters);
-        // also create past sessions? post to pastsessions with fbid in url and body
+        // create empty pastsession
+        String idParam = String.format("fbid=%s", id);
+        new PostAsyncTask().execute(getResources().getString(R.string.server_pastsession), idParam);
 
         startActivity(intent);
     }
