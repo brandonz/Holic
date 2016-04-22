@@ -1,18 +1,17 @@
 {
   "project_info": {
-    "project_id": "holic-1278",
-    "project_number": "455523849287",
-    "name": "holic"
+    "project_id": "gcm-3-0",
+    "project_number": "976269300166",
+    "name": "GCM 3-0"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:455523849287:android:fadd4adb2452f1c4",
-        "client_id": "android:cos333.project_corgis",
+        "mobilesdk_app_id": "1:976269300166:android:66ecce2233c7b16c",
+        "client_id": "android:info.androidhive.gcm",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "cos333.project_corgis",
-          "certificate_hash": []
+          "package_name": "info.androidhive.gcm"
         }
       },
       "oauth_client": [],
