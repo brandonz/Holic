@@ -45,7 +45,8 @@
             android:layout_weight="1"
             android:text="@string/chats"
             android:id="@+id/chats"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:onClick="startChatActivity" />
 
     </TableRow>
 
