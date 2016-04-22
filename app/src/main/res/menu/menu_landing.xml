@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cos333.project_corgis.LandingActivity">
 
-    <item
+    <!--item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="never" /-->
 
     <item
         android:id="@+id/action_profile"

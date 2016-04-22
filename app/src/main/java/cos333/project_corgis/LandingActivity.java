@@ -53,9 +53,14 @@ public class LandingActivity extends AppCompatActivity {
     }
 
     public void openLogout() {
-        System.out.println("in logout");
         FacebookSdk.sdkInitialize(getApplicationContext());
         LoginManager.getInstance().logOut();
+        this.finish();
+    }
+
+    public void openStats(View view) {
+        Intent intent = new Intent(this, Stats.class);
+        startActivity(intent);
     }
 
     @Override
