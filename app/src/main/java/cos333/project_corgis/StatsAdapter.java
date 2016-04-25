@@ -8,13 +8,13 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHolder> {
 
-    private ArrayList<ArrayList<Stats.Drink>> logList;
+    private ArrayList<ArrayList<Drink>> logList;
 
-    //TODO make specific to me
     public class StatsViewHolder extends RecyclerView.ViewHolder {
         public TextView date, numDrinks, maxBAC;
 
@@ -26,8 +26,9 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
         }
     }
 
-    public StatsAdapter(ArrayList<ArrayList<Stats.Drink>> logs) {
+    public StatsAdapter(ArrayList<ArrayList<Drink>> logs) {
         this.logList = logs;
+        Collections.reverse(logs); // so the sessions display in reverse order
     }
 
     @Override
@@ -40,10 +41,10 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
 
     @Override
     public void onBindViewHolder(StatsViewHolder holder, int position) {
-        ArrayList<Stats.Drink> log = logList.get(position);
+        ArrayList<Drink> log = logList.get(position);
         double max = 0;
         double numDrinks = 0;
-        for (Stats.Drink drink : log) {
+        for (Drink drink : log) {
             if (drink.bac > max)
                 max = drink.bac;
             numDrinks += drink.amount;
@@ -59,8 +60,6 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
 
     @Override
     public int getItemCount() {
-        //if (logList != null)
-            return logList.size();
-        //return 0;
+        return logList.size();
     }
 }
