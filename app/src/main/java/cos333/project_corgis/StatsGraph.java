@@ -104,9 +104,13 @@ public class StatsGraph extends AppCompatActivity {
         bacGraph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
 
         // set manual x bounds to have nice steps
-//        graph.getViewport().setMinX(log.get(0).time);
-//        graph.getViewport().setMaxX(log.get(numData - 1).time);
-//        graph.getViewport().setXAxisBoundsManual(true);
+        // I don't like this because it cuts off the very last one. TODO fix this
+//        drinkGraph.getViewport().setMinX(log.get(0).time);
+//        drinkGraph.getViewport().setMaxX(log.get(numData - 1).time);
+//        drinkGraph.getViewport().setXAxisBoundsManual(true);
+//        bacGraph.getViewport().setMinX(log.get(0).time);
+//        bacGraph.getViewport().setMaxX(log.get(numData - 1).time);
+//        bacGraph.getViewport().setXAxisBoundsManual(true);
 
         // Set Y axis bounds
         drinkGraph.getViewport().setMinY(0);

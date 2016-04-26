@@ -47,6 +47,7 @@ public class DrinkLogActivity extends AppCompatActivity {
     // User-entered gender. To be used in BAC calculations. Will have a value from
     // @strings/gender_choices
     private String gender;
+    private double r; // associated gender constant
 
     //info for emergency texting
     private String contactname;
@@ -90,6 +91,13 @@ public class DrinkLogActivity extends AppCompatActivity {
         lastname = pref.getString("lname", "");
         hasTexted = pref.getBoolean("hasTexted", false);
 
+
+        String genders[] = getResources().getStringArray(R.array.gender_choices);
+        if (gender.equals(genders[0]))
+            r = 0.68; // L/kg
+        else
+            r = 0.55; // L/kg
+
         refreshDisplay();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -101,13 +109,6 @@ public class DrinkLogActivity extends AppCompatActivity {
      * Calculate the BAC level
      */
     private double calcBAC() {
-        String genders[] = getResources().getStringArray(R.array.gender_choices);
-        double r;
-        if (gender.equals(genders[0]))
-            r = 0.68; // L/kg
-        else
-            r = 0.55; // L/kg
-
         // Curr bac from server.
         double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
 
@@ -230,7 +231,10 @@ public class DrinkLogActivity extends AppCompatActivity {
                         editor.putBoolean("hasTexted", false);
                         editor.apply();
 
-                        String params = "type=end";
+                        // save a final bac
+                        double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+                        String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.3f";
+                        String params = String.format(formatString, System.currentTimeMillis(), 0, bac);
                         new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                                 AccessToken.getCurrentAccessToken().getUserId(), params);
                     }
