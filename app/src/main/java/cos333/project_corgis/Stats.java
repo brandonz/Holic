@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Stats extends AppCompatActivity {
 
@@ -83,11 +84,11 @@ public class Stats extends AppCompatActivity {
         new GetAsyncTask().execute(getResources().getString(R.string.server_pastsession) + id);
     }
 
+    // Called on completion of the data parsing of past sessions in order.
+    // Reverses order for display and notifies the Recycler of changes to redisplay.
     private void render() {
+        Collections.reverse(logs); // so the sessions display in reverse order
         sAdapter.notifyDataSetChanged();
-        for (ArrayList<Drink> log : logs) {
-            System.out.println(log.get(0).bac);
-        }
     }
 
     public interface ClickListener {
@@ -164,7 +165,6 @@ public class Stats extends AppCompatActivity {
                             Drink drink = new Drink(logDrink.getDouble("drinkamount"),
                                     logDrink.getLong("drinktime"), logDrink.getDouble("currbac"));
                             logArray.add(drink);
-                            System.out.println("session added");
                         }
                         logs.add(logArray);
                     }

@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 
 public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHolder> {
@@ -28,7 +27,6 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
 
     public StatsAdapter(ArrayList<ArrayList<Drink>> logs) {
         this.logList = logs;
-        Collections.reverse(logs); // so the sessions display in reverse order
     }
 
     @Override
