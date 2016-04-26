@@ -32,9 +32,6 @@ public class StatsGraph extends AppCompatActivity {
 
         Intent intent = getIntent();
         log = intent.getParcelableArrayListExtra("session");
-        for (Drink d : log) {
-            System.out.println(d.bac);
-        }
 
         // Set title to include date
         String date = formatDate(log.get(0).time);

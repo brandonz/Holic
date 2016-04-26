@@ -1,4 +1,4 @@
-package cos333.project_corgis.chat;
+package cos333.project_corgis;
 
 
 /**
@@ -17,7 +17,6 @@ public class HolicUtil {
         double dt = (double)(System.currentTimeMillis() - millis)/(1000*3600);
         double alc = 0.6 * bacNumDrinks; //fluid ounces of alcohol
 
-        System.out.println(r);
         double C = Math.max(0.8 * alc / (weight * 16 * r) - b * dt, 0);
         if (C == 0) {
 //            bacNumDrinks = 0;

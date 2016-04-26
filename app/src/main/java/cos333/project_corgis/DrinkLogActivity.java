@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
@@ -24,8 +22,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import cos333.project_corgis.chat.HolicUtil;
 
 
 public class DrinkLogActivity extends AppCompatActivity {
@@ -170,7 +166,6 @@ public class DrinkLogActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "SMS failed.", Toast.LENGTH_LONG).show();
             }
         }
-        System.out.println("HI");
 
     }
 
