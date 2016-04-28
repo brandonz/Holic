@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
@@ -49,6 +47,7 @@ public class DrinkLogActivity extends AppCompatActivity {
     // User-entered gender. To be used in BAC calculations. Will have a value from
     // @strings/gender_choices
     private String gender;
+    private double r; // associated gender constant
 
     //info for emergency texting
     private String contactname;
@@ -92,6 +91,13 @@ public class DrinkLogActivity extends AppCompatActivity {
         lastname = pref.getString("lname", "");
         hasTexted = pref.getBoolean("hasTexted", false);
 
+
+        String genders[] = getResources().getStringArray(R.array.gender_choices);
+        if (gender.equals(genders[0]))
+            r = 0.68; // L/kg
+        else
+            r = 0.55; // L/kg
+
         refreshDisplay();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -103,49 +109,29 @@ public class DrinkLogActivity extends AppCompatActivity {
      * Calculate the BAC level
      */
     private double calcBAC() {
+        // Curr bac from server.
+        double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+
         if (newDrinkFlag) {
             num_drinks += drinkAmount;
             bac_num_drinks += drinkAmount;
             if (millis == 0) {
-                millis = drinkTime;
+                millis = drinkTime; // save the first drink time
             }
-        }
+            double newBac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
 
-        if (millis == 0)
-            return 0;
-
-        //use Widmark's equation
-        // Equation taken from http://www.wsp.wa.gov/breathtest/docs/webdms/Studies_Articles/Widmarks%20Equation%2009-16-1996.pdf
-        // C =  0.8 A z / (W r) - b dt
-        double b = 0.00017; //kg/L/hr
-        double dt = (double)(System.currentTimeMillis() - millis)/(1000*3600);
-        double alc = 0.6 * bac_num_drinks; //fluid ounces of alcohol
-
-        String genders[] = getResources().getStringArray(R.array.gender_choices);
-        double r;
-        if (gender.equals(genders[0]))
-            r = 0.68; // L/kg
-        else
-            r = 0.55; // L/kg
-        System.out.println(r);
-        double C = Math.max(0.8 * alc / (weight * 16 * r) - b * dt, 0);
-        if (C == 0) {
-//            bac_num_drinks = 0;
-            // update baccalcindex on server
-//            String formatString = "type=add&baccalcindex=%s";
-//            String params = String.format(formatString, num_drinks);
-//            new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-//                    AccessToken.getCurrentAccessToken().getUserId(), params);
-        }
-        double bac = C*100;
-
-        if (newDrinkFlag) {
-            // server code to put the new information
-            String formatString = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
-            String params = String.format(formatString, drinkTime, drinkAmount, bac);
+            // Send both to the server, using same time
+            String formatStringOld = "type=add&drinktime=%s&drinkamount=0&currbac=%.3f";
+            String paramsOld = String.format(formatStringOld, drinkTime, bac);
             new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                    AccessToken.getCurrentAccessToken().getUserId(), params);
+                    AccessToken.getCurrentAccessToken().getUserId(), paramsOld);
+            String formatStringNew = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
+            String paramsNew = String.format(formatStringNew, drinkTime, drinkAmount, newBac);
+            new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                    AccessToken.getCurrentAccessToken().getUserId(), paramsNew);
+
             newDrinkFlag = false;
+            return newBac;
         }
 
         return bac;
@@ -153,7 +139,7 @@ public class DrinkLogActivity extends AppCompatActivity {
 
     private void displayDrinks() {
         TextView textView = (TextView) findViewById(R.id.drinks_level);
-        textView.setText(String.format(getResources().getString(R.string.drinks_label), bac_num_drinks));
+        textView.setText(String.format(getResources().getString(R.string.drinks_label), num_drinks));
     }
 
     private void displayBAC() {
@@ -163,11 +149,8 @@ public class DrinkLogActivity extends AppCompatActivity {
         textView.setText(String.format(getResources().getString(R.string.bac_label), BAC));
 
         SmsManager emergency = SmsManager.getDefault();
-        String message = "Hi "+ contactname + ", " +
-                "You are receiving this message because your friend " + firstname + " " +
-                lastname + " has a BAC of 0.08 or higher. They are probably too drunk to take care" +
-                " of themselves, so you should go find them! (this message was " +
-                "automatically generated by Holic)";
+        String message = getResources().getString(R.string.emergency_message_format_string,
+                contactname, firstname, lastname);
 
         if ((BAC >= threshold) && !hasTexted && (num != null)) {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -184,7 +167,6 @@ public class DrinkLogActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "SMS failed.", Toast.LENGTH_LONG).show();
             }
         }
-        System.out.println("HI");
 
     }
 
@@ -249,7 +231,10 @@ public class DrinkLogActivity extends AppCompatActivity {
                         editor.putBoolean("hasTexted", false);
                         editor.apply();
 
-                        String params = "type=end";
+                        // save a final bac
+                        double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+                        String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.3f";
+                        String params = String.format(formatString, System.currentTimeMillis(), 0, bac);
                         new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                                 AccessToken.getCurrentAccessToken().getUserId(), params);
                     }
