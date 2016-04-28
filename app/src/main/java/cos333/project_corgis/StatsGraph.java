@@ -101,6 +101,7 @@ public class StatsGraph extends AppCompatActivity {
         // Initialize graphs
         GraphView drinkGraph = (GraphView) findViewById(R.id.drinkGraph);
         LineGraphSeries<DataPoint> drinkSeries = new LineGraphSeries<>(drinks);
+        drinkSeries.setColor(getResources().getColor(R.color.graph_green));
         drinkGraph.addSeries(drinkSeries);
         drinkGraph.setTitle("Drinks");
         drinkGraph.setTitleColor(getResources().getColor(android.R.color.white));
@@ -111,6 +112,7 @@ public class StatsGraph extends AppCompatActivity {
 
         GraphView bacGraph = (GraphView) findViewById(R.id.bacGraph);
         LineGraphSeries<DataPoint> bacSeries = new LineGraphSeries<>(bac);
+        bacSeries.setColor(getResources().getColor(R.color.graph_orange));
         bacGraph.addSeries(bacSeries);
         bacGraph.setTitle("BAC");
         bacGraph.setTitleColor(getResources().getColor(android.R.color.white));
