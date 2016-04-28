@@ -135,7 +135,6 @@
     <string name="date_format">MM/dd/yy HH:mm</string>
     <string name="title_activity_stats_graph">Session</string>
     <string name="graph_title">%s Statistics</string>
-    <string name="title_activity_stats">Stats</string>
 
     <string name="start_new_night">Start New Night</string>
 </resources>

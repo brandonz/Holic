@@ -6,4 +6,6 @@
     <color name="mainPurple">#5e4bd2</color>
     <color name = "darkPurple">#2E2276</color>
     <color name="bg_gray">#434252</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 </resources>

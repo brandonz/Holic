@@ -10,7 +10,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="cos333.project_corgis.StatsGraph"
-    tools:showIn="@layout/activity_stats_graph">
+    tools:showIn="@layout/activity_stats_graph"
+    android:background="@color/bg_gray">
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -19,18 +20,21 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/bg_gray">
 
             <com.jjoe64.graphview.GraphView
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
-                android:id="@+id/drinkGraph" />
+                android:id="@+id/drinkGraph"
+                android:background="@color/bg_gray" />
 
             <com.jjoe64.graphview.GraphView
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
                 android:layout_below="@id/drinkGraph"
-                android:id="@+id/bacGraph" />
+                android:id="@+id/bacGraph"
+                android:background="@color/bg_gray" />
 
         </RelativeLayout>
     </ScrollView>
