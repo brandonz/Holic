@@ -28,7 +28,7 @@
             android:textSize="50sp"
             android:id="@+id/bac_header"
             android:layout_column="0"
-            android:layout_span="3"
+            android:layout_span="5"
             android:text="@string/bac_header"
             android:textColor="#ffffff"
             android:textIsSelectable="false" />
@@ -43,7 +43,7 @@
             android:textSize="80sp"
             android:id="@+id/bac_level"
             android:layout_column="0"
-            android:layout_span="3"
+            android:layout_span="5"
             android:textColor="#ffffff" />
     </TableRow>
 
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/drinks_level"
-            android:layout_span="3"
+            android:layout_span="5"
             android:textSize="25sp"
             android:textColor="#ffffff"
             android:gravity="center_horizontal" />
@@ -93,52 +93,73 @@
             android:id="@+id/plusHalfButton"
             android:src="@drawable/addhalf_white"
             android:background="@drawable/rounded_new"
-            android:onClick="addHalfDrink" />
+            android:onClick="addHalfDrink"
+            android:layout_column="2" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Space
+            android:layout_width="20px"
+            android:layout_height="20px" />
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="2">
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30sp"
             android:text="@string/refresh_bac"
             android:id="@+id/refresh_button"
             android:onClick="refreshBAC"
+            android:src="@drawable/refresh"
+            android:background="@drawable/rounded_new"
+            android:layout_weight="50"
             android:layout_column="0" />
+    </TableRow>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/end_night"
-            android:id="@+id/end_night_button"
-            android:layout_column="2"
-            android:onClick="endSession" />
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Space
+            android:layout_width="20px"
+            android:layout_height="20px" />
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="5">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <ImageButton
+            android:layout_width="100sp"
+            android:layout_height="30sp"
+            android:text="@string/end_night"
+            android:id="@+id/end_night_button"
+            android:layout_column="0"
+            android:onClick="endSession"
+            android:src="@drawable/endnight"
+            android:background="@drawable/rounded_new" />
+
+        <ImageButton
+            android:layout_width="100sp"
+            android:layout_height="30sp"
             android:text="@string/undo"
             android:id="@+id/undo_button"
-            android:layout_column="0"
-            android:onClick="undo" />
+            android:layout_column="2"
+            android:onClick="undo"
+            android:src="@drawable/undo"
+            android:background="@drawable/rounded_new"
+            android:layout_weight="45" />
 
     </TableRow>
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></TableRow>
 
     <TableRow
         android:layout_width="match_parent"

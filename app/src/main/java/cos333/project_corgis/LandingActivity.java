@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -25,6 +26,7 @@ public class LandingActivity extends AppCompatActivity {
 
     // last click time of Start New Night, to prevent double clicks
     private long mLastClickTime = 0;
+    private boolean inSession;
     ImageButton nightButton;
 
     @Override
@@ -43,6 +45,10 @@ public class LandingActivity extends AppCompatActivity {
 //            }
 //        });
 
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("inSession", false);
+        editor.apply();
 
         nightButton = (ImageButton) findViewById(R.id.new_night);
         nightButton.setEnabled(true);
@@ -52,6 +58,15 @@ public class LandingActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         nightButton.setEnabled(true);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        inSession = pref.getBoolean("inSession", false); // default? should never go there
+        if (inSession) {
+            nightButton.setImageResource(R.drawable.continue_night);
+        }
+        else {
+            nightButton.setImageResource(R.drawable.start_night_2);
+        }
+
     }
 
     // from the server instead of the other page.
