@@ -137,7 +137,7 @@ public class DrinkLogActivity extends AppCompatActivity {
 
             // Send both to the server, using same time
             flagAddDrink = true;
-            String formatStringOld = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
+            String formatStringOld = "type=add&drinktime=%s&drinkamount=%s&currbac=%.7f";
             String paramsOld = String.format(formatStringOld, System.currentTimeMillis(), 0, bac);
             new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                     AccessToken.getCurrentAccessToken().getUserId(), paramsOld);
@@ -390,18 +390,6 @@ public class DrinkLogActivity extends AppCompatActivity {
             DrinkLogActivity.this.finish();
         }
     }
-    //Async task to end and save night
-    private class SaveNightAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... url) {
-            return RestClient.Put(url[0], url[1]);
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-            DrinkLogActivity.this.finish();
-        }
-    }
 
     //Async task to put new session info (e.g. set baccalcindex; add drinks)
     private class PutAsyncTask extends AsyncTask<String, Void, String> {
@@ -412,14 +400,23 @@ public class DrinkLogActivity extends AppCompatActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
+            if (saveNight) {
+                // callback for save night
+                saveNight = false;
+                DrinkLogActivity.this.finish();
+                return;
+            }
             if (flagAddDrink) {
                 // callback for add 0 drink
-                String formatStringNew = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
+                String formatStringNew = "type=add&drinktime=%s&drinkamount=%s&currbac=%.7f";
                 String paramsNew = String.format(formatStringNew, System.currentTimeMillis(), drinkAmount, addBac);
                 new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                         AccessToken.getCurrentAccessToken().getUserId(), paramsNew);
 
                 flagAddDrink = false;
+            } else {
+                // callback for undo
+                refreshDisplay();
             }
         }
     }
@@ -459,11 +456,10 @@ public class DrinkLogActivity extends AppCompatActivity {
                     if (saveNight) {
                         double bac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, 0, r, weight);
 
-                        String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.3f";
+                        String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.7f";
                         String params = String.format(formatString, System.currentTimeMillis(), 0, bac);
-                        new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                                 AccessToken.getCurrentAccessToken().getUserId(), params);
-                        saveNight = false;
                     }
 
                     displayBAC();
