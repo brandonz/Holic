@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -39,6 +40,8 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
         String gender = pref.getString("gender", "Male"); // default? also problematic lol
         String contactname = pref.getString("contact", "");
         String contactnum = pref.getString("contactnum", "");
+        boolean textingEnabled = pref.getBoolean("textingEnabled", false);
+        float threshold = pref.getFloat("threshold", 0);
 
         EditText firstname = (EditText) findViewById(R.id.edit_fname);
         firstname.setText(fname);
@@ -50,6 +53,12 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
         contactNameEdit.setText(contactname);
         EditText contactNumEdit = (EditText) findViewById(R.id.edit_contact_num);
         contactNumEdit.setText(contactnum);
+        CheckBox check = (CheckBox) findViewById(R.id.enable_texting);
+        check.setChecked(textingEnabled);
+        EditText thresholdEdit = (EditText) findViewById(R.id.edit_threshold);
+        if (textingEnabled || threshold != 0) {
+            thresholdEdit.setText(Float.toString(threshold));
+        }
 
         // Hack to get ScrollView to not set focus to an Edit Text
         ScrollView view = (ScrollView)findViewById(R.id.scrollView);
@@ -96,7 +105,6 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
     }
 
     public void sendInfo(View view) {
-        Intent intent = new Intent(this, LandingActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_weight);
         String weight = editText.getText().toString();
         if (weight.isEmpty() || Integer.parseInt(weight) == 0 || Integer.parseInt(weight) > 1000) {
@@ -127,6 +135,47 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
         String contactName = editText4.getText().toString();
         EditText editText5 = (EditText) findViewById(R.id.edit_contact_num);
         String contactNum = editText5.getText().toString();
+        EditText thresholdEdit = (EditText) findViewById(R.id.edit_threshold);
+        String threshold = thresholdEdit.getText().toString();
+
+        // Check for required threshold fields
+        CheckBox checkBox = (CheckBox) findViewById(R.id.enable_texting);
+        if (checkBox.isChecked()) {
+            if (threshold.isEmpty()) {
+                AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+                builder.setTitle(R.string.error_message);
+                builder.setMessage(R.string.enter_threshold);
+                builder.setCancelable(true);
+
+                builder.setPositiveButton(
+                        R.string.okay,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder.create().show();
+                return;
+            }
+            if (contactNum.isEmpty()) {
+                AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+                builder.setTitle(R.string.error_message);
+                builder.setMessage(R.string.enter_number);
+                builder.setCancelable(true);
+
+                builder.setPositiveButton(
+                        R.string.okay,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder.create().show();
+                return;
+            }
+        }
 
         // save stuff locally
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -138,6 +187,8 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
         editor.putString("gender", body_type);
         editor.putString("contact", contactName);
         editor.putString("contactnum", contactNum);
+        editor.putBoolean("textingEnabled", checkBox.isChecked());
+        editor.putFloat("threshold", Float.parseFloat(threshold)); //only saved locally
         editor.apply();
 
         String formatString = "type=add&fname=%s&lname=%s&weight=%s&gender=%s&contactname=%s&contactnumber=%s";
@@ -145,7 +196,7 @@ public class EditProfile extends AppCompatActivity implements AdapterView.OnItem
                 toMF(body_type), contactName, contactNum);
         new PutAsyncTask().execute(getResources().getString(R.string.server) + id, urlParameters);
 
-        startActivity(intent);
+        finish();
     }
 
     @Override

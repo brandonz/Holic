@@ -101,6 +101,7 @@ public class StatsGraph extends AppCompatActivity {
         // Initialize graphs
         GraphView drinkGraph = (GraphView) findViewById(R.id.drinkGraph);
         LineGraphSeries<DataPoint> drinkSeries = new LineGraphSeries<>(drinks);
+        drinkSeries.setColor(getResources().getColor(R.color.graph_green));
         drinkGraph.addSeries(drinkSeries);
         drinkGraph.setTitle("Drinks");
         drinkGraph.setTitleColor(getResources().getColor(android.R.color.white));
@@ -111,6 +112,7 @@ public class StatsGraph extends AppCompatActivity {
 
         GraphView bacGraph = (GraphView) findViewById(R.id.bacGraph);
         LineGraphSeries<DataPoint> bacSeries = new LineGraphSeries<>(bac);
+        bacSeries.setColor(getResources().getColor(R.color.graph_orange));
         bacGraph.addSeries(bacSeries);
         bacGraph.setTitle("BAC");
         bacGraph.setTitleColor(getResources().getColor(android.R.color.white));
@@ -121,20 +123,41 @@ public class StatsGraph extends AppCompatActivity {
 
         // set date label formatter
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        DateAsXAxisLabelFormatter formatter = new DateAsXAxisLabelFormatter(getApplicationContext(), sdf);
-        drinkGraph.getGridLabelRenderer().setLabelFormatter(formatter);
+        DateAsXAxisLabelFormatter formatterDrink = new DateAsXAxisLabelFormatter(getApplicationContext(), sdf) {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    // show normal x values
+                    return super.formatLabel(value, isValueX);
+                } else {
+                    return String.format("%.1f", value);
+                }
+            }
+        };
+        DateAsXAxisLabelFormatter formatterBac = new DateAsXAxisLabelFormatter(getApplicationContext(), sdf) {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    // show normal x values
+                    return super.formatLabel(value, isValueX);
+                } else {
+                    return String.format("%.3f", value);
+                }
+            }
+        };
+        drinkGraph.getGridLabelRenderer().setLabelFormatter(formatterDrink);
         drinkGraph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-        bacGraph.getGridLabelRenderer().setLabelFormatter(formatter);
+        bacGraph.getGridLabelRenderer().setLabelFormatter(formatterBac);
         bacGraph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
 
         // set manual x bounds to have nice steps
         // I don't like this because it cuts off the very last one. TODO fix this
-//        drinkGraph.getViewport().setMinX(log.get(0).time);
-//        drinkGraph.getViewport().setMaxX(log.get(numData - 1).time);
-//        drinkGraph.getViewport().setXAxisBoundsManual(true);
-//        bacGraph.getViewport().setMinX(log.get(0).time);
-//        bacGraph.getViewport().setMaxX(log.get(numData - 1).time);
-//        bacGraph.getViewport().setXAxisBoundsManual(true);
+        drinkGraph.getViewport().setMinX(log.get(0).time-60000);
+        drinkGraph.getViewport().setMaxX(log.get(numData - 1).time+60000);
+        drinkGraph.getViewport().setXAxisBoundsManual(true);
+        bacGraph.getViewport().setMinX(log.get(0).time-60000);
+        bacGraph.getViewport().setMaxX(log.get(numData - 1).time+60000);
+        bacGraph.getViewport().setXAxisBoundsManual(true);
 
         // Set Y axis bounds
         drinkGraph.getViewport().setMinY(0);

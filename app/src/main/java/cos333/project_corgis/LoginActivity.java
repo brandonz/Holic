@@ -129,6 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("gender", mfToGender(person.getString("gender")));
                     editor.apply();
                     startActivity(landing);
+                    finish();
                 } else {
                     final Intent newUserScreen = new Intent(LoginActivity.this, CreateProfile.class);
                     startActivity(newUserScreen);

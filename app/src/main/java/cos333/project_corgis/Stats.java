@@ -1,5 +1,6 @@
 package cos333.project_corgis;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -35,6 +36,9 @@ public class Stats extends AppCompatActivity {
     private RecyclerView recyclerView;
     private StatsAdapter sAdapter;
 
+    //
+    ProgressDialog loading;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,12 @@ public class Stats extends AppCompatActivity {
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // initialize loading screen
+        loading = new ProgressDialog(this);
+        loading.setTitle(getResources().getString(R.string.loading));
+        loading.setMessage(getResources().getString(R.string.loading_message));
+        loading.setCancelable(false);
+        loading.show();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -173,7 +183,7 @@ public class Stats extends AppCompatActivity {
                 }
             } catch(Exception e) {
             }
-
+            loading.dismiss();
         }
     }
 
