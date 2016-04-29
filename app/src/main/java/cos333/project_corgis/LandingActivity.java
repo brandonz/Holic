@@ -83,9 +83,12 @@ public class LandingActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Logout, close stuff and go back to login
     public void openLogout() {
         FacebookSdk.sdkInitialize(getApplicationContext());
         LoginManager.getInstance().logOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
         this.finish();
     }
 
