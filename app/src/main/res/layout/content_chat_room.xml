@@ -41,7 +41,7 @@
             android:background="@null"
             android:text="SEND"
             android:textSize="16dp"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/mainPurple" />
 
     </LinearLayout>
 

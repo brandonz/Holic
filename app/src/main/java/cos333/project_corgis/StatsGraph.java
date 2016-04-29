@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
@@ -9,7 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -22,6 +28,11 @@ public class StatsGraph extends AppCompatActivity {
 
     // All the Drinks for this session.
     private ArrayList<Drink> log;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,9 @@ public class StatsGraph extends AppCompatActivity {
 //            }
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     // Formats the given time (from System.currentTimeMillis) as a date String
@@ -89,11 +103,21 @@ public class StatsGraph extends AppCompatActivity {
         LineGraphSeries<DataPoint> drinkSeries = new LineGraphSeries<>(drinks);
         drinkGraph.addSeries(drinkSeries);
         drinkGraph.setTitle("Drinks");
+        drinkGraph.setTitleColor(getResources().getColor(android.R.color.white));
+        GridLabelRenderer drinkGrid = drinkGraph.getGridLabelRenderer();
+        drinkGrid.setHorizontalLabelsColor(getResources().getColor(android.R.color.white));
+        drinkGrid.setVerticalLabelsColor(getResources().getColor(android.R.color.white));
+        drinkGrid.reloadStyles();
 
         GraphView bacGraph = (GraphView) findViewById(R.id.bacGraph);
         LineGraphSeries<DataPoint> bacSeries = new LineGraphSeries<>(bac);
         bacGraph.addSeries(bacSeries);
         bacGraph.setTitle("BAC");
+        bacGraph.setTitleColor(getResources().getColor(android.R.color.white));
+        GridLabelRenderer bacGrid = bacGraph.getGridLabelRenderer();
+        bacGrid.setHorizontalLabelsColor(getResources().getColor(android.R.color.white));
+        bacGrid.setVerticalLabelsColor(getResources().getColor(android.R.color.white));
+        bacGrid.reloadStyles();
 
         // set date label formatter
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -121,4 +145,43 @@ public class StatsGraph extends AppCompatActivity {
         bacGraph.getViewport().setYAxisBoundsManual(true);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "StatsGraph Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://cos333.project_corgis/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "StatsGraph Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://cos333.project_corgis/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
 }

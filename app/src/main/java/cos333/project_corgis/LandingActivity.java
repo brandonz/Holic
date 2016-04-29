@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
@@ -25,7 +25,7 @@ public class LandingActivity extends AppCompatActivity {
 
     // last click time of Start New Night, to prevent double clicks
     private long mLastClickTime = 0;
-    Button nightButton;
+    ImageButton nightButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class LandingActivity extends AppCompatActivity {
 //        });
 
 
-        nightButton = (Button) findViewById(R.id.new_night);
+        nightButton = (ImageButton) findViewById(R.id.new_night);
         nightButton.setEnabled(true);
     }
 

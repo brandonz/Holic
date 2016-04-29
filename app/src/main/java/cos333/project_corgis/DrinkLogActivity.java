@@ -152,12 +152,12 @@ public class DrinkLogActivity extends AppCompatActivity {
         String message = getResources().getString(R.string.emergency_message_format_string,
                 contactname, firstname, lastname);
 
-
         if ((BAC >= threshold) && !hasTexted && (num != null)) {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean("hasTexted", true);
             editor.apply();
+            hasTexted = pref.getBoolean("hasTexted", false);
 
             try {
                 emergency.sendMultipartTextMessage(num, null, emergency.divideMessage(message), null, null);

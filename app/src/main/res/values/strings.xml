@@ -10,7 +10,8 @@
     <string name="add_half_drink">+1/2</string>
     <string name="refresh_bac">Refresh</string>
     <string name="drinks_label">Number of drinks: %.1f</string>
-    <string name="bac_label">BAC: %.3f</string>
+    <string name="bac_header">BAC:</string>
+    <string name="bac_label">%.3f</string>
     <string name="reset_drink">Reset</string>
     <string name="end_night">End Night</string>
     <string name="end_night_confirm">Do you want to save your session?</string>
@@ -140,4 +141,6 @@
     <string name="date_format">MM/dd/yy HH:mm</string>
     <string name="title_activity_stats_graph">Session</string>
     <string name="graph_title">%s Statistics</string>
+
+    <string name="start_new_night">Start New Night</string>
 </resources>

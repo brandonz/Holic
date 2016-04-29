@@ -9,75 +9,169 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:stretchColumns="*"
+    android:stretchColumns="0,1,2"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="cos333.project_corgis.DrinkLogActivity"
-    tools:showIn="@layout/activity_drink_log">
+    tools:showIn="@layout/activity_drink_log"
+    android:background="@color/bg_gray">
 
     <TableRow>
+
+    </TableRow>
+
+    <TableRow android:layout_weight="3">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="50sp"
+            android:id="@+id/bac_header"
+            android:layout_column="0"
+            android:layout_span="3"
+            android:text="@string/bac_header"
+            android:textColor="#ffffff"
+            android:textIsSelectable="false" />
+    </TableRow>
+
+    <TableRow android:layout_weight="5">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="80sp"
+            android:id="@+id/bac_level"
+            android:layout_column="0"
+            android:layout_span="3"
+            android:textColor="#ffffff" />
+    </TableRow>
+
+    <TableRow>
+
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/drinks_level"
+            android:layout_span="3"
+            android:textSize="25sp"
+            android:textColor="#ffffff"
+            android:gravity="center_horizontal" />
+    </TableRow>
+
+    <TableRow>
+
+        <Space
+            android:layout_width="20px"
+            android:layout_height="20px" />
+    </TableRow>
+
+    <TableRow android:layout_weight="1">
 
         <ImageButton
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="45"
             android:id="@+id/imageButton"
-            android:background="#5e4bdf"
-            android:src="@drawable/addone"
+            android:background="@drawable/rounded_new"
+            android:src="@drawable/addone_white"
             android:onClick="addOneDrink" />
 
         <Space
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="10"/>
+            android:layout_height="0dp"
+            android:layout_weight="5" />
 
         <ImageButton
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="100dp"
             android:layout_weight="45"
             android:id="@+id/imageButton2"
-            android:src="@drawable/addhalf"
-            android:background="#5e4bdf"
+            android:src="@drawable/addhalf_white"
+            android:background="@drawable/rounded_new"
             android:onClick="addHalfDrink" />
-
     </TableRow>
 
-    <TableRow></TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5">
 
-    <TableRow>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="40sp"
-            android:id="@+id/bac_level" />
-    </TableRow>
-
-    <TableRow>
-        <Space
-            android:layout_width="1dp"
-            android:layout_height="10dp"/>
-    </TableRow>
-
-    <TableRow>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/drinks_level"
-            />
-    </TableRow>
-
-    <TableRow>
-        <Space
-            android:layout_width="1dp"
-            android:layout_height="10dp"/>
-    </TableRow>
-
-    <TableRow>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/refresh_bac"
             android:id="@+id/button"
-            android:onClick="refreshBAC" />
+            android:onClick="refreshBAC"
+            android:layout_column="0" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     </TableRow>
 
 

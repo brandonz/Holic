@@ -12,43 +12,64 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="cos333.project_corgis.LandingActivity"
-    tools:showIn="@layout/activity_landing">
+    tools:showIn="@layout/activity_landing"
+    android:background="@color/bg_gray">
 
     <!--TODO: Use pictures instead of buttons?-->
     <TableRow
         android:layout_height="fill_parent"
         android:layout_width="match_parent">
-        <Button
+
+        <ImageButton
             android:layout_width="match_parent"
             android:layout_height="150sp"
             android:layout_weight="1"
             android:onClick="startDrinkActivity"
-            android:text="@string/new_night"
             android:id="@+id/new_night"
-            android:textSize="20sp" />
+            android:src="@drawable/start_night_2"
+            android:contentDescription="@string/start_new_night"
+            android:background="@drawable/rounded_new" />
+
     </TableRow>
 
     <TableRow
         android:layout_height="fill_parent"
         android:layout_width="match_parent">
-        <Button
+
+        <Space
+            android:layout_width="20px"
+            android:layout_height="20px" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
             android:layout_width="0sp"
             android:layout_height="150sp"
             android:layout_weight="1"
-            android:text="@string/stats"
             android:id="@+id/stats"
             android:textSize="20sp"
-            android:onClick="openStats" />
+            android:onClick="openStats"
+            android:background="@drawable/rounded_new"
+            android:layout_column="0"
+            android:src="@drawable/stats_icon" />
 
-        <Button
+        <Space
+            android:layout_width="20px"
+            android:layout_height="20px" />
+
+        <ImageButton
             android:layout_width="0sp"
             android:layout_height="150sp"
             android:layout_weight="1"
-            android:text="@string/chats"
             android:id="@+id/chats"
             android:textSize="20sp"
-            android:onClick="startChatActivity" />
-
+            android:onClick="startChatActivity"
+            android:background="@drawable/rounded_new"
+            android:layout_column="1"
+            android:src="@drawable/chat_icon" />
     </TableRow>
 
 
