@@ -123,7 +123,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
                 // the user would be having the same message when he was sending
                 // but it might differs in your scenario
                 SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
-                String id = pref.getString("fbid", "");
+                String id = pref.getString("id", "");
                 if (datObj.getString("fbid").equals(id)) {
                     Log.e(TAG, "Skipping the push message as it belongs to same user");
                     return;
