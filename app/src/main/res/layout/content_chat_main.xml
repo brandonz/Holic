@@ -21,8 +21,11 @@
         android:layout_height="wrap_content"
         android:text="Add New Chat"
         android:id="@+id/add_new_chat"
-        android:layout_alignParentTop="true"
+        android:layout_marginBottom="68dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="182dp" />
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

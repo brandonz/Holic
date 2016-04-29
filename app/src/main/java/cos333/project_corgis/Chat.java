@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.facebook.AccessToken;
+import com.facebook.Profile;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,16 +48,6 @@ public class Chat extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//      FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//      fab.setOnClickListener(new View.OnClickListener() {
-//          @Override
-//          public void onClick(View view) {
-//              Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show();
-//            }
-//        });
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         cAdapter = new ChatAdapter(logs);
@@ -75,6 +68,16 @@ public class Chat extends AppCompatActivity{
             }
         });
 
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.FAB);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         final Button create = (Button) findViewById(R.id.create_chat);
         create.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -85,17 +88,18 @@ public class Chat extends AppCompatActivity{
     }
 
     public void sendInfo(View view) {
-        System.out.println(logs.get(0));
+        Profile currProf = Profile.getCurrentProfile();
+        String id = currProf.getId();
         intent = new Intent(this, ChatRoomActivity.class);
         EditText chatName = (EditText) findViewById(R.id.chat_name);
         name = chatName.getText().toString();
         if (name.isEmpty()) {
-            name = "@string/new_chat";
+            name = "New Chat";
         }
 
         // Send info to the server
         String formatString = "fbids=%s&chat_name=%s";
-        String fbids = "";
+        String fbids = id + ",";
 
         //Creates format string for all fbids
         for (int i = 0; i < logs.size(); i++) {
@@ -116,25 +120,20 @@ public class Chat extends AppCompatActivity{
         }
         @Override
         protected void onPostExecute(String result) {
-            System.out.println("got in");
             try {
                 System.out.println("trying");
                 JSONObject obj = new JSONObject(result);
 
                 if (obj.length() > 0) {
-                    System.out.println("yes object");
                     intent.putExtra("chat_room_id", obj.getString("chat_room_id"));
                     intent.putExtra("name", name);
-System.out.println("why no start activity");
                     startActivity(intent);
                 } else {
-                    System.out.println("what");
                     final Intent chatFail = new Intent(Chat.this, ChatMainActivity.class);
                     startActivity(chatFail);
                     finish();
                 }
             } catch(Exception e) {
-                System.out.println("caught");
             }
         }
     }

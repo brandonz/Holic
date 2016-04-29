@@ -62,6 +62,7 @@
             android:id="@+id/create_chat"
             android:layout_gravity="right" />
 
+
     </LinearLayout>
 
 </RelativeLayout>
