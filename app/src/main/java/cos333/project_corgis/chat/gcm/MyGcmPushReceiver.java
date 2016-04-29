@@ -18,6 +18,7 @@ package cos333.project_corgis.chat.gcm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -49,18 +50,27 @@ public class MyGcmPushReceiver extends GcmListenerService {
      * @param bundle Data bundle containing message data as key/value pairs.
      *               For Set of keys use data.keySet().
      */
-
+    // TODO
     @Override
     public void onMessageReceived(String from, Bundle bundle) {
-        String title = bundle.getString("title");
-        Boolean isBackground = Boolean.valueOf(bundle.getString("is_background"));
-        String flag = bundle.getString("flag");
+
+//        Log.d(TAG, "Test: " + test);
+
+//        String title = bundle.getString("title");
+//        Boolean isBackground = Boolean.valueOf(bundle.getString("is_background"));
+//        String flag = bundle.getString("flag");
+//        String data = bundle.getString("data");
+//        Log.d(TAG, "From: " + from);
+//        Log.d(TAG, "title: " + title);
+//        Log.d(TAG, "isBackground: " + isBackground);
+//        Log.d(TAG, "flag: " + flag);
+//        Log.d(TAG, "data: " + data);
+
+        String title = "Holic";
+        String flag = "1";
+        Boolean isBackground = false;
         String data = bundle.getString("data");
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "title: " + title);
-        Log.d(TAG, "isBackground: " + isBackground);
-        Log.d(TAG, "flag: " + flag);
-        Log.d(TAG, "data: " + data);
+
 
         if (flag == null)
             return;
@@ -93,34 +103,36 @@ public class MyGcmPushReceiver extends GcmListenerService {
      * Processing chat room push message
      * this message will be broadcasts to all the activities registered
      * */
+    // TODO: update so that it uses the correct format
     private void processChatRoomPush(String title, boolean isBackground, String data) {
         if (!isBackground) {
 
             try {
                 JSONObject datObj = new JSONObject(data);
-
                 String chatRoomId = datObj.getString("chat_room_id");
 
-                JSONObject mObj = datObj.getJSONObject("message");
+//                JSONObject mObj = datObj.getJSONObject("message");
                 Message message = new Message();
-                message.setMessage(mObj.getString("message"));
-                message.setId(mObj.getString("message_id"));
-                message.setCreatedAt(mObj.getString("created_at"));
+                message.setMessage(datObj.getString("message"));
+                message.setId(datObj.getString("message_id"));
+                message.setCreatedAt(datObj.getString("created_at"));
 
-                JSONObject uObj = datObj.getJSONObject("user");
+//                JSONObject uObj = datObj.getJSONObject("user");
 
                 // skip the message if the message belongs to same user as
                 // the user would be having the same message when he was sending
                 // but it might differs in your scenario
-                if (uObj.getString("user_id").equals(MyApplication.getInstance().getPrefManager().getUser().getId())) {
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+                String id = pref.getString("fbid", "");
+                if (datObj.getString("fbid").equals(id)) {
                     Log.e(TAG, "Skipping the push message as it belongs to same user");
                     return;
                 }
 
                 User user = new User();
-                user.setId(uObj.getString("user_id"));
-                user.setEmail(uObj.getString("email"));
-                user.setName(uObj.getString("name"));
+                user.setId(datObj.getString("fbid"));
+//                user.setEmail(uObj.getString("email"));
+                user.setName(datObj.getString("username"));
                 message.setUser(user);
 
                 // verifying whether the app is in background or foreground
