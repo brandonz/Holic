@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -48,12 +49,14 @@ public class ChatRoomActivity extends AppCompatActivity {
     private String TAG = ChatRoomActivity.class.getSimpleName();
 
     private String chatRoomId;
+    private String title;
     private RecyclerView recyclerView;
     private ChatRoomThreadAdapter mAdapter;
     private ArrayList<Message> messageArrayList;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private EditText inputMessage;
     private Button btnSend;
+    private String fbid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +70,11 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         chatRoomId = intent.getStringExtra("chat_room_id");
-        String title = intent.getStringExtra("name");
+        title = intent.getStringExtra("name");
+
+        // get user id
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        fbid = pref.getString("id", "");
 
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -150,6 +157,7 @@ public class ChatRoomActivity extends AppCompatActivity {
      * will make an http call to our server. Our server again sends the message
      * to all the devices as push notification
      * */
+    // TODO: send put request to heroku
     private void sendMessage() {
         final String message = this.inputMessage.getText().toString().trim();
 
@@ -158,57 +166,77 @@ public class ChatRoomActivity extends AppCompatActivity {
             return;
         }
 
-        String endPoint = EndPoints.CHAT_ROOM_MESSAGE.replace("_ID_", chatRoomId);
+        String endPoint = "http://holic-server.herokuapp.com/api/chats/" + chatRoomId;
 
         Log.e(TAG, "endpoint: " + endPoint);
 
         this.inputMessage.setText("");
 
-        StringRequest strReq = new StringRequest(Request.Method.POST,
+        StringRequest strReq = new StringRequest(Request.Method.PUT,
                 endPoint, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
                 Log.e(TAG, "response: " + response);
 
-                try {
-                    JSONObject obj = new JSONObject(response);
+                String userId = fbid;
+                String userName = title;
+                User user = new User(userId, userName, null);
 
-                    // check for error
-                    if (obj.getBoolean("error") == false) {
-                        JSONObject commentObj = obj.getJSONObject("message");
+                Message nmessage = new Message();
+                // TODO: add the actually comment id
+                nmessage.setId("123");
+                nmessage.setMessage(message);
+                // TODO set the actualy created_at time
+                nmessage.setCreatedAt("123");
+                nmessage.setUser(user);
 
-                        String commentId = commentObj.getString("message_id");
-                        String commentText = commentObj.getString("message");
-                        String createdAt = commentObj.getString("created_at");
+                messageArrayList.add(nmessage);
 
-                        JSONObject userObj = obj.getJSONObject("user");
-                        String userId = userObj.getString("user_id");
-                        String userName = userObj.getString("name");
-                        User user = new User(userId, userName, null);
-
-                        Message message = new Message();
-                        message.setId(commentId);
-                        message.setMessage(commentText);
-                        message.setCreatedAt(createdAt);
-                        message.setUser(user);
-
-                        messageArrayList.add(message);
-
-                        mAdapter.notifyDataSetChanged();
-                        if (mAdapter.getItemCount() > 1) {
-                            // scrolling to bottom of the recycler view
-                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
-                        }
-
-                    } else {
-                        Toast.makeText(getApplicationContext(), "" + obj.getString("message"), Toast.LENGTH_LONG).show();
-                    }
-
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing error: " + e.getMessage());
-                    Toast.makeText(getApplicationContext(), "json parse error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                mAdapter.notifyDataSetChanged();
+                if (mAdapter.getItemCount() > 1) {
+                    // scrolling to bottom of the recycler view
+                    recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
                 }
+
+//                try {
+//                    JSONObject obj = new JSONObject(response);
+//
+//                    // check for error
+//                    if (obj.getBoolean("error") == false) {
+//                        JSONObject commentObj = obj.getJSONObject("message");
+//
+//                        String commentId = commentObj.getString("message_id");
+//                        String commentText = commentObj.getString("message");
+//                        String createdAt = commentObj.getString("created_at");
+//
+//                        JSONObject userObj = obj.getJSONObject("user");
+//                        String userId = userObj.getString("user_id");
+//                        String userName = userObj.getString("name");
+//                        User user = new User(userId, userName, null);
+//
+//                        Message message = new Message();
+//                        message.setId(commentId);
+//                        message.setMessage(commentText);
+//                        message.setCreatedAt(createdAt);
+//                        message.setUser(user);
+//
+//                        messageArrayList.add(message);
+//
+//                        mAdapter.notifyDataSetChanged();
+//                        if (mAdapter.getItemCount() > 1) {
+//                            // scrolling to bottom of the recycler view
+//                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
+//                        }
+//
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), "" + obj.getString("message"), Toast.LENGTH_LONG).show();
+//                    }
+//
+//                } catch (JSONException e) {
+//                    Log.e(TAG, "json parsing error: " + e.getMessage());
+//                    Toast.makeText(getApplicationContext(), "json parse error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
             }
         }, new Response.ErrorListener() {
 
@@ -222,10 +250,16 @@ public class ChatRoomActivity extends AppCompatActivity {
         }) {
 
             @Override
+            // TODO: set put params
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", MyApplication.getInstance().getPrefManager().getUser().getId());
+
+                params.put("type", "addmessage");
+                params.put("fbid", fbid);
                 params.put("message", message);
+
+//                params.put("user_id", MyApplication.getInstance().getPrefManager().getUser().getId());
+//                params.put("message", message);
 
                 Log.e(TAG, "Params: " + params.toString());
 
