@@ -55,6 +55,7 @@ public class DrinkLogActivity extends AppCompatActivity {
 
     private double threshold = 0.08;
     private boolean hasTexted;
+    private boolean inSession;
 
     // flag for saving night at the end of bac calculation refresh
     private boolean saveNight = false;
@@ -67,7 +68,7 @@ public class DrinkLogActivity extends AppCompatActivity {
     // stuff to disable while waiting
     private ImageButton plusOne;
     private ImageButton plusHalf;
-    private Button endButt;
+    private ImageButton endButt;
     // For helping to wait for the server
     private long mLastClickTime;
 
@@ -103,6 +104,11 @@ public class DrinkLogActivity extends AppCompatActivity {
         firstname = pref.getString("fname", "");
         lastname = pref.getString("lname", "");
         hasTexted = pref.getBoolean("hasTexted", false);
+        inSession = true;
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("inSession", true);
+        editor.apply();
+
 
 
         String genders[] = getResources().getStringArray(R.array.gender_choices);
@@ -114,7 +120,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         // initialize buttons
         plusOne = (ImageButton) findViewById(R.id.plusOneButton);
         plusHalf = (ImageButton) findViewById(R.id.plusHalfButton);
-        endButt = (Button) findViewById(R.id.end_night_button);
+        endButt = (ImageButton) findViewById(R.id.end_night_button);
 
         refreshDisplay();
 
@@ -232,6 +238,7 @@ public class DrinkLogActivity extends AppCompatActivity {
                         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                         SharedPreferences.Editor editor = pref.edit();
                         editor.putBoolean("hasTexted", false);
+                        editor.putBoolean("inSession", false);
                         editor.apply();
 
                         // save a final bac
@@ -246,6 +253,7 @@ public class DrinkLogActivity extends AppCompatActivity {
                         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                         SharedPreferences.Editor editor = pref.edit();
                         editor.putBoolean("hasTexted", false);
+                        editor.putBoolean("inSession", false);
                         editor.apply();
 
                         new DeleteAsyncTask().execute(getResources().getString(R.string.server_currsession) +
