@@ -153,6 +153,16 @@
                 android:value=".chat.activity.ChatMainActivity" />
         </activity>
 
+        <activity
+            android:name=".Chat"
+            android:label="@string/new_chat"
+            android:parentActivityName=".chat.activity.ChatMainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".chat.activity.ChatMainActivity" />
+        </activity>
+
         <!-- START Added for GCM -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"

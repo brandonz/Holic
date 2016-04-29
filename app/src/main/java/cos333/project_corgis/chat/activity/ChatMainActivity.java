@@ -16,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
@@ -32,6 +34,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cos333.project_corgis.Chat;
 import cos333.project_corgis.R;
 import cos333.project_corgis.chat.adapter.ChatRoomsAdapter;
 import cos333.project_corgis.chat.app.Config;
@@ -131,6 +134,15 @@ public class ChatMainActivity extends AppCompatActivity {
             registerGCM();
             fetchChatRooms();
         }
+
+        //Add item when 'Enter' is clicked
+        final Button newChat = (Button) findViewById(R.id.add_new_chat);
+        newChat.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent myIntent = new Intent(ChatMainActivity.this, Chat.class);
+                ChatMainActivity.this.startActivity(myIntent);
+            }
+        });
     }
 
     /**
