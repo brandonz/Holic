@@ -123,10 +123,31 @@ public class StatsGraph extends AppCompatActivity {
 
         // set date label formatter
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        DateAsXAxisLabelFormatter formatter = new DateAsXAxisLabelFormatter(getApplicationContext(), sdf);
-        drinkGraph.getGridLabelRenderer().setLabelFormatter(formatter);
+        DateAsXAxisLabelFormatter formatterDrink = new DateAsXAxisLabelFormatter(getApplicationContext(), sdf) {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    // show normal x values
+                    return super.formatLabel(value, isValueX);
+                } else {
+                    return String.format("%.1f", value);
+                }
+            }
+        };
+        DateAsXAxisLabelFormatter formatterBac = new DateAsXAxisLabelFormatter(getApplicationContext(), sdf) {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    // show normal x values
+                    return super.formatLabel(value, isValueX);
+                } else {
+                    return String.format("%.3f", value);
+                }
+            }
+        };
+        drinkGraph.getGridLabelRenderer().setLabelFormatter(formatterDrink);
         drinkGraph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-        bacGraph.getGridLabelRenderer().setLabelFormatter(formatter);
+        bacGraph.getGridLabelRenderer().setLabelFormatter(formatterBac);
         bacGraph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
 
         // set manual x bounds to have nice steps
