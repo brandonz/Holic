@@ -24,8 +24,11 @@
     <string name="okay">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="undo">Undo</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save Changes</string>
+    <string name="undo_confirm_title">Undo last drink</string>
+    <string name="undo_confirm_message">"Are you sure you want to undo your last drink? This action cannot be undone."</string>
     <string name="gender_prompt">Enter your body type:</string>
     <string-array name="gender_choices">
         <item>Male</item>

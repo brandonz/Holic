@@ -59,6 +59,11 @@ public class DrinkLogActivity extends AppCompatActivity {
     // flag for saving night at the end of bac calculation refresh
     private boolean saveNight = false;
 
+    // flag for the second add
+    private boolean flagAddDrink = false;
+    // bac for the second add O:
+    private double addBac;
+
     // stuff to disable while waiting
     private ImageButton plusOne;
     private ImageButton plusHalf;
@@ -128,16 +133,14 @@ public class DrinkLogActivity extends AppCompatActivity {
         if (newDrinkFlag) {
             num_drinks += drinkAmount;
             double newBac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, drinkAmount, r, weight);
+            addBac = newBac;
 
             // Send both to the server, using same time
+            flagAddDrink = true;
             String formatStringOld = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
             String paramsOld = String.format(formatStringOld, System.currentTimeMillis(), 0, bac);
             new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                     AccessToken.getCurrentAccessToken().getUserId(), paramsOld);
-            String formatStringNew = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
-            String paramsNew = String.format(formatStringNew, System.currentTimeMillis(), drinkAmount, newBac);
-            new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                    AccessToken.getCurrentAccessToken().getUserId(), paramsNew);
 
             newDrinkFlag = false;
             return newBac;
@@ -234,12 +237,6 @@ public class DrinkLogActivity extends AppCompatActivity {
                         // save a final bac
                         saveNight = true;
                         refreshDisplay();
-                        double bac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, 0, r, weight);
-
-                        String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.3f";
-                        String params = String.format(formatString, System.currentTimeMillis(), 0, bac);
-                        new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                                AccessToken.getCurrentAccessToken().getUserId(), params);
                     }
                 });
 
@@ -258,6 +255,33 @@ public class DrinkLogActivity extends AppCompatActivity {
         builder.setNeutralButton(R.string.cancel,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+        confirm = builder.create();
+        confirm.show();
+    }
+
+    public void undo(View view) {
+        AlertDialog confirm;
+        AlertDialog.Builder builder = new AlertDialog.Builder(DrinkLogActivity.this);
+
+        builder.setMessage(R.string.undo_confirm_message);
+        builder.setTitle(R.string.undo_confirm_title);
+        builder.setCancelable(true);
+
+        builder.setNeutralButton(
+                R.string.cancel,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+        builder.setPositiveButton(R.string.undo,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String params = "type=remove";
+                        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId(), params);
                     }
                 });
         confirm = builder.create();
@@ -384,6 +408,19 @@ public class DrinkLogActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... url) {
             return RestClient.Put(url[0], url[1]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            if (flagAddDrink) {
+                // callback for add 0 drink
+                String formatStringNew = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
+                String paramsNew = String.format(formatStringNew, System.currentTimeMillis(), drinkAmount, addBac);
+                new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                        AccessToken.getCurrentAccessToken().getUserId(), paramsNew);
+
+                flagAddDrink = false;
+            }
         }
     }
 
