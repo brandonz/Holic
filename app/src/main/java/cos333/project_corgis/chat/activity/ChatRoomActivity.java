@@ -251,9 +251,10 @@ public class ChatRoomActivity extends AppCompatActivity {
     /**
      * Fetching all the messages of a single chat room
      * */
+    // TODO get the chat thread from heroku and populate
     private void fetchChatThread() {
 
-        String endPoint = EndPoints.CHAT_THREAD.replace("_ID_", chatRoomId);
+        String endPoint = "http://holic-server.herokuapp.com/api/chats/" +chatRoomId;
         Log.e(TAG, "endPoint: " + endPoint);
 
         StringRequest strReq = new StringRequest(Request.Method.GET,
@@ -264,41 +265,71 @@ public class ChatRoomActivity extends AppCompatActivity {
                 Log.e(TAG, "response: " + response);
 
                 try {
-                    JSONObject obj = new JSONObject(response);
+                    JSONArray fObj = new JSONArray(response);
+                    JSONObject obj = (JSONObject) fObj.get(0);
+
+                    JSONArray commentsObj = obj.getJSONArray("messages");
+
+                    for (int i = 0; i < commentsObj.length(); i++) {
+                        JSONObject commentObj = (JSONObject) commentsObj.get(i);
+
+                        String commentId = commentObj.getString("_id");
+                        String commentText = commentObj.getString("message");
+                        String createdAt = commentObj.getString("created_at");
+
+                        JSONObject userObj = commentObj.getJSONObject("user");
+                        String userId = userObj.getString("fbid");
+                        String userName = userObj.getString("username");
+                        User user = new User(userId, userName, null);
+
+                        Message message = new Message();
+                        message.setId(commentId);
+                        message.setMessage(commentText);
+                        message.setCreatedAt(createdAt);
+                        message.setUser(user);
+
+                        messageArrayList.add(message);
+                    }
+
+                    mAdapter.notifyDataSetChanged();
+                    if (mAdapter.getItemCount() > 1) {
+                        recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
+                    }
+
 
                     // check for error
-                    if (obj.getBoolean("error") == false) {
-                        JSONArray commentsObj = obj.getJSONArray("messages");
-
-                        for (int i = 0; i < commentsObj.length(); i++) {
-                            JSONObject commentObj = (JSONObject) commentsObj.get(i);
-
-                            String commentId = commentObj.getString("message_id");
-                            String commentText = commentObj.getString("message");
-                            String createdAt = commentObj.getString("created_at");
-
-                            JSONObject userObj = commentObj.getJSONObject("user");
-                            String userId = userObj.getString("user_id");
-                            String userName = userObj.getString("username");
-                            User user = new User(userId, userName, null);
-
-                            Message message = new Message();
-                            message.setId(commentId);
-                            message.setMessage(commentText);
-                            message.setCreatedAt(createdAt);
-                            message.setUser(user);
-
-                            messageArrayList.add(message);
-                        }
-
-                        mAdapter.notifyDataSetChanged();
-                        if (mAdapter.getItemCount() > 1) {
-                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
-                        }
-
-                    } else {
-                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
-                    }
+//                    if (obj.getBoolean("error") == false) {
+//                        JSONArray commentsObj = obj.getJSONArray("messages");
+//
+//                        for (int i = 0; i < commentsObj.length(); i++) {
+//                            JSONObject commentObj = (JSONObject) commentsObj.get(i);
+//
+//                            String commentId = commentObj.getString("message_id");
+//                            String commentText = commentObj.getString("message");
+//                            String createdAt = commentObj.getString("created_at");
+//
+//                            JSONObject userObj = commentObj.getJSONObject("user");
+//                            String userId = userObj.getString("user_id");
+//                            String userName = userObj.getString("username");
+//                            User user = new User(userId, userName, null);
+//
+//                            Message message = new Message();
+//                            message.setId(commentId);
+//                            message.setMessage(commentText);
+//                            message.setCreatedAt(createdAt);
+//                            message.setUser(user);
+//
+//                            messageArrayList.add(message);
+//                        }
+//
+//                        mAdapter.notifyDataSetChanged();
+//                        if (mAdapter.getItemCount() > 1) {
+//                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
+//                        }
+//
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
+//                    }
 
                 } catch (JSONException e) {
                     Log.e(TAG, "json parsing error: " + e.getMessage());
