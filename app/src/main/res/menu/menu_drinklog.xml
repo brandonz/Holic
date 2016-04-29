@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cos333.project_corgis.DrinkLogActivity">
     <item
-        android:id="@+id/reset_drink"
+        android:id="@+id/display_info"
         android:orderInCategory="100"
-        android:title="@string/end_night"
+        android:title="@string/more_info"
         app:showAsAction="never" />
 
 </menu>

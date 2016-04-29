@@ -139,4 +139,15 @@
     <string name="graph_title">%s Statistics</string>
 
     <string name="start_new_night">Start New Night</string>
+    <string name="more_info">More Info</string>
+    <string name="drinklog_info">Your BAC is being calculated using the Widmark formula, a simple
+        formula that estimates BAC given body type, gender, and amount of drinks had.</string>
+    <string name="drinklog_info2">The amount of alcohol in different drinks varies, but in general,
+    one standard drink is 12 oz. of beer, 5 oz. of wine, or 1.5 oz.of 80-proof liquor like whiskey
+    or gin.</string>
+    <string name="bac_limits">Holic displays your BAC in percentages. The legal limit of BAC is
+        0.08. If you are above that, you are not legally supposed to be driving. A BAC of around
+        0.13 is where one may begin to feel unwell, and around 0.2 is where blackout may start
+        to occur. These are not hard limits, but it never hurts to be too careful when approaching
+        these BAC levels! </string>
 </resources>

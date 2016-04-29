@@ -13,11 +13,20 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="cos333.project_corgis.DrinkLogActivity"
     tools:showIn="@layout/activity_drink_log"
-    android:background="@color/bg_gray">
+    android:background="@color/bg_gray"
+    android:id="@+id/tab">
 
-    <TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     </TableRow>
+
+    <TableRow><![CDATA[
+
+        ... />
+
+    ]]></TableRow>
 
     <TableRow android:layout_weight="3">
 
@@ -28,10 +37,12 @@
             android:textSize="50sp"
             android:id="@+id/bac_header"
             android:layout_column="0"
-            android:layout_span="5"
             android:text="@string/bac_header"
             android:textColor="#ffffff"
-            android:textIsSelectable="false" />
+            android:textIsSelectable="false"
+            android:layout_gravity="center_horizontal"
+            android:layout_span="5" />
+
     </TableRow>
 
     <TableRow android:layout_weight="5">

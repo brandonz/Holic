@@ -3,14 +3,19 @@ package cos333.project_corgis;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -24,6 +29,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import cos333.project_corgis.chat.activity.ChatMainActivity;
 
 
 public class DrinkLogActivity extends AppCompatActivity {
@@ -78,6 +85,8 @@ public class DrinkLogActivity extends AppCompatActivity {
      */
     private GoogleApiClient client;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,6 +136,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
     }
 
     /**
@@ -154,6 +164,7 @@ public class DrinkLogActivity extends AppCompatActivity {
 
         return bac;
     }
+
 
     private void displayDrinks() {
         TextView textView = (TextView) findViewById(R.id.drinks_level);
@@ -364,27 +375,26 @@ public class DrinkLogActivity extends AppCompatActivity {
         client.disconnect();
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_drinklog, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_drinklog, menu);
+        return true;
+    }
 
     /**
      * Handles menu selection.
      */
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle item selection
-//        switch (item.getItemId()) {
-//            case R.id.reset_drink:
-//                endSession();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.display_info:
+                startActivity(new Intent(this, InfoActivity.class));
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     //Async task to delete the session without saving
     private class DeleteAsyncTask extends AsyncTask<String, Void, String> {

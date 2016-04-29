@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_gray">
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="20px" />
+
+    <TextView
+        android:layout_width="322dp"
+        android:layout_height="wrap_content"
+        android:text="@string/drinklog_info"
+        android:id="@+id/bac_info"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="30sp" />
+
+    <TextView
+        android:layout_width="322dp"
+        android:layout_height="wrap_content"
+        android:text="@string/drinklog_info2"
+        android:id="@+id/alc_info"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="30sp" />
+
+    <TextView
+        android:layout_width="322dp"
+        android:layout_height="wrap_content"
+        android:text="@string/bac_limits"
+        android:id="@+id/bac_effect"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>
