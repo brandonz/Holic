@@ -15,7 +15,7 @@
     <string name="end_night">End Night</string>
     <string name="end_night_confirm">Do you want to save your session?</string>
     <string name="loading">Loading...</string>
-    <string name="loading_message">We\'re saving your updates. Thanks for being patient!</string>
+    <string name="loading_message">We\'re getting your information. Thanks for being patient!</string>
     <string name="title_activity_drink_log">Drink Logging</string>
     <string name="information_prompt">
         To help us keep better track of your BAC, enter your information.</string>
@@ -67,6 +67,9 @@
     <string name="title_activity_landing">Home</string>
     <string name="new_night">Start a new night!</string>
     <string name="stats">Statistics</string>
+    <string name="length_format">Length of night: %1$s hours, %2$s minutes, %3$s seconds</string>
+    <string name="average_format">Average drinks per hour: %1$.3f</string>
+    <string name="max_bac_format">Highest BAC: %1$.3f</string>
     <string name="chats">Chat Rooms</string>
     <string name="logout">Logout</string>
     <string name="title_activity_settings">Settings</string>

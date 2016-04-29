@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -20,9 +21,12 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class StatsGraph extends AppCompatActivity {
 
@@ -48,6 +52,8 @@ public class StatsGraph extends AppCompatActivity {
         String date = formatDate(log.get(0).time);
         setTitle(String.format(getResources().getString(R.string.graph_title), date));
 
+        populateText();
+
         populateGraph();
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -69,6 +75,49 @@ public class StatsGraph extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat(getResources().getString(R.string.date_format));
         Date resultDate = new Date(time);
         return sdf.format(resultDate);
+    }
+
+    // Populates the text views with statistics
+    public void populateText() {
+        // Length of session
+        long first = log.get(0).time;
+        long last = log.get(log.size() - 1).time;
+        long diff = last - first;
+
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+        long hours = TimeUnit.MILLISECONDS.toHours(diff);
+        String timedelta = getResources().getString(R.string.length_format,
+                hours, minutes, seconds);
+
+        TextView length = (TextView) findViewById(R.id.length_text);
+        length.setText(timedelta);
+
+        // Number of drinks
+        double total = 0;
+        double highest = 0;
+        for (Drink drink : log) {
+            total += drink.amount;
+            // and highest bac
+            if (drink.bac > highest) {
+                highest = drink.bac;
+            }
+        }
+        String numDrinks = String.format(getResources().getString(R.string.drinks_label), total);
+        TextView drinks = (TextView) findViewById(R.id.num_drink_text);
+        drinks.setText(numDrinks);
+
+        // Average drinks per hour
+        double hoursDec = diff / (double) 3600000; // magic number to turn millis to hours
+        double avg = total / hoursDec;
+        String avgText = getResources().getString(R.string.average_format, avg);
+        TextView avgDrinks = (TextView) findViewById(R.id.avg_drink_text);
+        avgDrinks.setText(avgText);
+
+        // Highest bac
+        TextView maxBac = (TextView) findViewById(R.id.highest_bac_text);
+        String max = getResources().getString(R.string.max_bac_format, highest);
+        maxBac.setText(max);
     }
 
     // Uses the log data to fill in the graph
@@ -151,7 +200,6 @@ public class StatsGraph extends AppCompatActivity {
         bacGraph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
 
         // set manual x bounds to have nice steps
-        // I don't like this because it cuts off the very last one. TODO fix this
         drinkGraph.getViewport().setMinX(log.get(0).time-60000);
         drinkGraph.getViewport().setMaxX(log.get(numData - 1).time+60000);
         drinkGraph.getViewport().setXAxisBoundsManual(true);

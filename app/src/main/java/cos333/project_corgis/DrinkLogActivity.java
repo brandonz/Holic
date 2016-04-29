@@ -308,11 +308,17 @@ public class DrinkLogActivity extends AppCompatActivity {
         plusOne.setEnabled(false);
         plusHalf.setEnabled(false);
         endButt.setEnabled(false);
+        plusOne.setClickable(false);
+        plusHalf.setClickable(false);
+        endButt.setClickable(false);
     }
     public void enableButtons() {
         plusOne.setEnabled(true);
         plusHalf.setEnabled(true);
         endButt.setEnabled(true);
+        plusOne.setClickable(true);
+        plusHalf.setClickable(true);
+        endButt.setClickable(true);
     }
 
     // Updates the last click time. Used for preventing double clicking of buttons while waiting

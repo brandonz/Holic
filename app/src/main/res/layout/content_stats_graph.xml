@@ -23,10 +23,38 @@
             android:layout_height="wrap_content"
             android:background="@color/bg_gray">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/length_text"
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/length_text"
+                android:id="@+id/num_drink_text"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/num_drink_text"
+                android:id="@+id/avg_drink_text"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/avg_drink_text"
+                android:id="@+id/highest_bac_text"
+                android:textColor="@color/white" />
+
             <com.jjoe64.graphview.GraphView
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
                 android:id="@+id/drinkGraph"
+                android:layout_below="@id/highest_bac_text"
                 android:background="@color/bg_gray" />
 
             <com.jjoe64.graphview.GraphView
