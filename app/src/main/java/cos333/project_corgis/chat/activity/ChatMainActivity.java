@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -146,9 +148,18 @@ public class ChatMainActivity extends AppCompatActivity {
         }
 
         //Add item when 'Enter' is clicked
-        final Button newChat = (Button) findViewById(R.id.add_new_chat);
-        newChat.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+//        final Button newChat = (Button) findViewById(R.id.add_new_chat);
+//        newChat.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                Intent myIntent = new Intent(ChatMainActivity.this, Chat.class);
+//                ChatMainActivity.this.startActivity(myIntent);
+//            }
+//        });
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent myIntent = new Intent(ChatMainActivity.this, Chat.class);
                 ChatMainActivity.this.startActivity(myIntent);
             }
@@ -356,7 +367,7 @@ public class ChatMainActivity extends AppCompatActivity {
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        // Inflate the menu; this adds items to the action bar if it is present.
-//        MenuInflater inflater = getMenuInflater();
+//        MenuInflater inflater = getMenuInflater();++
 //        inflater.inflate(R.menu.menu_chat_main, menu);
 //        return true;
 //    }

@@ -68,7 +68,7 @@ public class Chat extends AppCompatActivity{
             }
         });
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.FAB);
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -77,7 +77,7 @@ public class Chat extends AppCompatActivity{
 //            }
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+//
         final Button create = (Button) findViewById(R.id.create_chat);
         create.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
