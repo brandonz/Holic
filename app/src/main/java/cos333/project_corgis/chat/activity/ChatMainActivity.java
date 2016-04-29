@@ -4,7 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
@@ -32,6 +37,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cos333.project_corgis.Chat;
 import cos333.project_corgis.R;
 import cos333.project_corgis.chat.adapter.ChatRoomsAdapter;
 import cos333.project_corgis.chat.app.Config;
@@ -42,6 +48,7 @@ import cos333.project_corgis.chat.gcm.NotificationUtils;
 import cos333.project_corgis.chat.helper.SimpleDividerItemDecoration;
 import cos333.project_corgis.chat.model.ChatRoom;
 import cos333.project_corgis.chat.model.Message;
+import cos333.project_corgis.chat.model.User;
 
 public class ChatMainActivity extends AppCompatActivity {
 
@@ -60,8 +67,16 @@ public class ChatMainActivity extends AppCompatActivity {
          * Check for login session. If not logged in launch
          * login activity
          * */
+        // TODO: set shared pref for username, it works for a beta
         if (MyApplication.getInstance().getPrefManager().getUser() == null) {
-            launchLoginActivity();
+//            launchLoginActivity();
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+            User user = new User("1",
+                    pref.getString("fname", ""),
+                    "project@corgis.com");
+
+            // storing user in shared preferences
+            MyApplication.getInstance().getPrefManager().storeUser(user);
         }
 
         setContentView(R.layout.activity_chat_main);
@@ -131,6 +146,24 @@ public class ChatMainActivity extends AppCompatActivity {
             registerGCM();
             fetchChatRooms();
         }
+
+        //Add item when 'Enter' is clicked
+//        final Button newChat = (Button) findViewById(R.id.add_new_chat);
+//        newChat.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                Intent myIntent = new Intent(ChatMainActivity.this, Chat.class);
+//                ChatMainActivity.this.startActivity(myIntent);
+//            }
+//        });
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(ChatMainActivity.this, Chat.class);
+                ChatMainActivity.this.startActivity(myIntent);
+            }
+        });
     }
 
     /**
@@ -180,35 +213,57 @@ public class ChatMainActivity extends AppCompatActivity {
      * fetching the chat rooms by making http call
      */
     private void fetchChatRooms() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         StringRequest strReq = new StringRequest(Request.Method.GET,
-                EndPoints.CHAT_ROOMS, new Response.Listener<String>() {
+                "http://holic-server.herokuapp.com/api/chats/user/" + pref.getString("id", ""), new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
                 Log.e(TAG, "response: " + response);
-
+                // TODO get the right chat rooms and populate
                 try {
                     JSONObject obj = new JSONObject(response);
 
-                    // check for error flag
-                    if (obj.getBoolean("error") == false) {
-                        JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
-                        for (int i = 0; i < chatRoomsArray.length(); i++) {
-                            JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
-                            ChatRoom cr = new ChatRoom();
-                            cr.setId(chatRoomsObj.getString("chat_room_id"));
-                            cr.setName(chatRoomsObj.getString("name"));
-                            cr.setLastMessage("");
-                            cr.setUnreadCount(0);
-                            cr.setTimestamp(chatRoomsObj.getString("created_at"));
-
-                            chatRoomArrayList.add(cr);
-                        }
-
-                    } else {
-                        // error in fetching chat rooms
-                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
+                    JSONArray chatRoomsArray = obj.getJSONArray("userchats");
+                    for (int i = 0; i < chatRoomsArray.length(); i++) {
+                        JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
+                        ChatRoom cr = new ChatRoom();
+                        cr.setId(chatRoomsObj.getString("chat_room_id"));
+                        cr.setName(chatRoomsObj.getString("chat_name"));
+                        cr.setLastMessage("");
+                        cr.setUnreadCount(0);
+                        cr.setTimestamp(chatRoomsObj.getString("recent_time"));
+                        chatRoomArrayList.add(cr);
                     }
+
+                    // check for error flag
+//                    if (obj.getBoolean("error") == false) {
+//                        JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
+//                        for (int i = 0; i < chatRoomsArray.length(); i++) {
+//                            JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
+//
+//                            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+//                            System.out.println(pref.getString("id", ""));
+//
+//                            ChatRoom cr = new ChatRoom();
+//                            cr.setId(chatRoomsObj.getString("chat_room_id"));
+//                            cr.setName(chatRoomsObj.getString("name"));
+//                            cr.setLastMessage("");
+//                            cr.setUnreadCount(0);
+//                            cr.setTimestamp(chatRoomsObj.getString("created_at"));
+//                            ChatRoom cr = new ChatRoom();
+//                            cr.setId("" + i);
+//                            cr.setName("Test " + i);
+//                            cr.setLastMessage("");
+//                            cr.setUnreadCount(i);
+//                            cr.setTimestamp(chatRoomsObj.getString("created_at"));
+//                            chatRoomArrayList.add(cr);
+//                        }
+//
+//                    } else {
+//                        // error in fetching chat rooms
+//                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
+//                    }
 
                 } catch (JSONException e) {
                     Log.e(TAG, "json parsing error: " + e.getMessage());
@@ -309,22 +364,22 @@ public class ChatMainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_chat_main, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_logout:
-                MyApplication.getInstance().logout();
-                break;
-        }
-        return super.onOptionsItemSelected(menuItem);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        MenuInflater inflater = getMenuInflater();++
+//        inflater.inflate(R.menu.menu_chat_main, menu);
+//        return true;
+//    }
+//
+//    public boolean onOptionsItemSelected(MenuItem menuItem) {
+//        switch (menuItem.getItemId()) {
+//            case R.id.action_logout:
+//                MyApplication.getInstance().logout();
+//                break;
+//        }
+//        return super.onOptionsItemSelected(menuItem);
+//    }
 
 
 }
