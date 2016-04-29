@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -84,6 +83,47 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         String contactName = editText4.getText().toString();
         EditText editText5 = (EditText) findViewById(R.id.edit_contact_num);
         String contactNum = editText5.getText().toString();
+        EditText thresholdEdit = (EditText) findViewById(R.id.edit_threshold);
+        String threshold = thresholdEdit.getText().toString();
+
+        // Check for required threshold fields
+        CheckBox checkBox = (CheckBox) findViewById(R.id.enable_texting);
+        if (checkBox.isChecked()) {
+            if (threshold.isEmpty()) {
+                AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+                builder.setTitle(R.string.error_message);
+                builder.setMessage(R.string.enter_threshold);
+                builder.setCancelable(true);
+
+                builder.setPositiveButton(
+                        R.string.okay,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder.create().show();
+                return;
+            }
+            if (contactNum.isEmpty()) {
+                AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+
+                builder.setTitle(R.string.error_message);
+                builder.setMessage(R.string.enter_number);
+                builder.setCancelable(true);
+
+                builder.setPositiveButton(
+                        R.string.okay,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder.create().show();
+                return;
+            }
+        }
 
         // Save stuff locally
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -95,6 +135,8 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         editor.putString("gender", body_type);
         editor.putString("contact", contactName);
         editor.putString("contactnum", contactNum);
+        editor.putBoolean("textingEnabled", checkBox.isChecked());
+        editor.putFloat("threshold", Float.parseFloat(threshold)); //only saved locally
         editor.apply();
 
         // Send info to the server
@@ -106,6 +148,7 @@ public class CreateProfile extends AppCompatActivity implements AdapterView.OnIt
         String idParam = String.format("fbid=%s", id);
         new PostAsyncTask().execute(getResources().getString(R.string.server_pastsession), idParam);
 
+        finish();
         startActivity(intent);
     }
     @Override

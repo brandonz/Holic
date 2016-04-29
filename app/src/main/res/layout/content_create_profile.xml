@@ -99,12 +99,41 @@
                 android:text="@string/gender_disclaimer"
                 android:id="@+id/textView" />
 
+            <!--Emergency contact info stuff-->
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/enable_texting"
+                android:text="@string/enable_texting_message"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_explain"
+                android:id="@+id/textView9"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/threshold_title"
+                android:id="@+id/threshold"
+                android:layout_weight="1"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_threshold"
+                android:hint="@string/legal_limit_hint"
+                android:inputType="numberDecimal"
+                android:layout_weight="1"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/enter_contact"
                 android:id="@+id/textView7"
-                android:layout_gravity="center_horizontal"
                 android:layout_weight="1" />
 
             <EditText
@@ -130,13 +159,6 @@
                 android:ems="10"
                 android:id="@+id/edit_contact_num"
                 android:text="@string/sample_number"
-                android:layout_weight="1" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/contact_explain"
-                android:id="@+id/textView9"
                 android:layout_weight="1" />
 
             <Button

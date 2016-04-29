@@ -53,6 +53,7 @@ public class DrinkLogActivity extends AppCompatActivity {
     private String firstname;
     private String lastname;
 
+    private boolean textingEnabled = false;
     private double threshold = 0.08;
     private boolean hasTexted;
 
@@ -103,6 +104,8 @@ public class DrinkLogActivity extends AppCompatActivity {
         firstname = pref.getString("fname", "");
         lastname = pref.getString("lname", "");
         hasTexted = pref.getBoolean("hasTexted", false);
+        textingEnabled = pref.getBoolean("textingEnabled", false);
+        threshold = pref.getFloat("threshold", (float) 0.08);
 
 
         String genders[] = getResources().getStringArray(R.array.gender_choices);
@@ -164,7 +167,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         String message = getResources().getString(R.string.emergency_message_format_string,
                 contactname, firstname, lastname);
 
-        if ((BAC >= threshold) && !hasTexted && (num != null) && !num.isEmpty()) {
+        if (textingEnabled && (BAC >= threshold) && !hasTexted && (num != null) && !num.isEmpty()) {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean("hasTexted", true);
