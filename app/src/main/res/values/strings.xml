@@ -14,6 +14,8 @@
     <string name="reset_drink">Reset</string>
     <string name="end_night">End Night</string>
     <string name="end_night_confirm">Do you want to save your session?</string>
+    <string name="loading">Loading...</string>
+    <string name="loading_message">We\'re saving your updates. Thanks for being patient!</string>
     <string name="title_activity_drink_log">Drink Logging</string>
     <string name="information_prompt">
         To help us keep better track of your BAC, enter your information.</string>

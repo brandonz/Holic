@@ -1,17 +1,19 @@
 package cos333.project_corgis;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,16 @@ public class DrinkLogActivity extends AppCompatActivity {
     private double threshold = 0.08;
     private boolean hasTexted;
 
+    // flag for saving night at the end of bac calculation refresh
+    private boolean saveNight = false;
+
+    // stuff to disable while waiting
+    private ImageButton plusOne;
+    private ImageButton plusHalf;
+    private Button endButt;
+    // For helping to wait for the server
+    private long mLastClickTime;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -93,6 +105,11 @@ public class DrinkLogActivity extends AppCompatActivity {
             r = 0.68; // L/kg
         else
             r = 0.55; // L/kg
+
+        // initialize buttons
+        plusOne = (ImageButton) findViewById(R.id.plusOneButton);
+        plusHalf = (ImageButton) findViewById(R.id.plusHalfButton);
+        endButt = (Button) findViewById(R.id.end_night_button);
 
         refreshDisplay();
 
@@ -163,10 +180,16 @@ public class DrinkLogActivity extends AppCompatActivity {
     }
 
     public void addOneDrink(View view) {
+        if (!updateClick()) {
+            return;
+        }
         addDrinks(1);
     }
 
     public void addHalfDrink(View view) {
+        if (!updateClick()) {
+            return;
+        }
         addDrinks(0.5);
     }
 
@@ -180,14 +203,6 @@ public class DrinkLogActivity extends AppCompatActivity {
         refreshDisplay();
     }
 
-    /**
-     * Resets drink with no argument.
-     */
-    public void resetDrink() {
-        // TODO: connect to server
-        num_drinks = 0;
-        refreshDisplay();
-    }
 
     public void refreshBAC(View view) {
         refreshDisplay();
@@ -196,7 +211,10 @@ public class DrinkLogActivity extends AppCompatActivity {
     /**
      * Called to end a session. User is prompted whether or not to save the session.
      */
-    public void endSession() {
+    public void endSession(View view) {
+        if (!updateClick()) {
+            return;
+        }
         AlertDialog confirm;
         AlertDialog.Builder builder  = new AlertDialog.Builder(this);
 
@@ -214,8 +232,8 @@ public class DrinkLogActivity extends AppCompatActivity {
                         editor.apply();
 
                         // save a final bac
+                        saveNight = true;
                         refreshDisplay();
-                        //double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
                         double bac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, 0, r, weight);
 
                         String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.3f";
@@ -247,8 +265,31 @@ public class DrinkLogActivity extends AppCompatActivity {
     }
 
     public void refreshDisplay() {
+        disableButtons();
         new GetAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                 AccessToken.getCurrentAccessToken().getUserId());
+    }
+
+    public void disableButtons() {
+        plusOne.setEnabled(false);
+        plusHalf.setEnabled(false);
+        endButt.setEnabled(false);
+    }
+    public void enableButtons() {
+        plusOne.setEnabled(true);
+        plusHalf.setEnabled(true);
+        endButt.setEnabled(true);
+    }
+
+    // Updates the last click time. Used for preventing double clicking of buttons while waiting
+    // for server response.
+    public boolean updateClick() {
+        // Double-clicking prevention, using threshold of 1000 ms
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+            return false;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+        return true;
     }
 
     @Override
@@ -291,29 +332,27 @@ public class DrinkLogActivity extends AppCompatActivity {
         client.disconnect();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_drinklog, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_drinklog, menu);
+//        return true;
+//    }
 
     /**
      * Handles menu selection.
-     * @param item
-     * @return
      */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.reset_drink:
-                endSession();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle item selection
+//        switch (item.getItemId()) {
+//            case R.id.reset_drink:
+//                endSession();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     //Async task to delete the session without saving
     private class DeleteAsyncTask extends AsyncTask<String, Void, String> {
@@ -380,6 +419,16 @@ public class DrinkLogActivity extends AppCompatActivity {
                         prevDrinkTime = drinkLogs.getJSONObject(index).getLong("drinktime");
                     } catch(Exception e) {}
 
+                    if (saveNight) {
+                        double bac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, 0, r, weight);
+
+                        String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.3f";
+                        String params = String.format(formatString, System.currentTimeMillis(), 0, bac);
+                        new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId(), params);
+                        saveNight = false;
+                    }
+
                     displayBAC();
                     displayDrinks();
                 } else { // no such session! shouldn't happen, set to 0 in case
@@ -392,6 +441,7 @@ public class DrinkLogActivity extends AppCompatActivity {
                 }
             } catch(Exception e) {
             }
+            enableButtons();
         }
     }
 }

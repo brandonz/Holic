@@ -76,7 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="45"
-            android:id="@+id/imageButton"
+            android:id="@+id/plusOneButton"
             android:background="@drawable/rounded_new"
             android:src="@drawable/addone_white"
             android:onClick="addOneDrink" />
@@ -90,7 +90,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="45"
-            android:id="@+id/imageButton2"
+            android:id="@+id/plusHalfButton"
             android:src="@drawable/addhalf_white"
             android:background="@drawable/rounded_new"
             android:onClick="addHalfDrink" />
@@ -105,9 +105,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/refresh_bac"
-            android:id="@+id/button"
+            android:id="@+id/refresh_button"
             android:onClick="refreshBAC"
             android:layout_column="0" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/end_night"
+            android:id="@+id/end_night_button"
+            android:layout_column="2"
+            android:onClick="endSession" />
     </TableRow>
 
     <TableRow
