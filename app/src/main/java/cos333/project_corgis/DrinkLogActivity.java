@@ -29,16 +29,12 @@ public class DrinkLogActivity extends AppCompatActivity {
     private double num_drinks = 0;
 
     // Variables for BAC Calculation.
-    // number of drinks since 0 BAC.
-    private double bac_num_drinks = 0;
-    // time of first drink.
-    private long millis = 0;
+    private double prevBAC = 0;
+    private long prevDrinkTime = 0;
 
     // Variables for server-based BAC calculation.
     // amount of latest drink
     private double drinkAmount = 0;
-    // time of latest drink
-    private long drinkTime = 0;
     // Flag to use latest values in BAC calculation
     private boolean newDrinkFlag = false;
 
@@ -106,27 +102,23 @@ public class DrinkLogActivity extends AppCompatActivity {
     }
 
     /**
-     * Calculate the BAC level
+     * Calculate the BAC level. Called from displayBAC(), which is called after GET request.
      */
     private double calcBAC() {
         // Curr bac from server.
-        double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+        double bac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, 0, r, weight);
 
         if (newDrinkFlag) {
             num_drinks += drinkAmount;
-            bac_num_drinks += drinkAmount;
-            if (millis == 0) {
-                millis = drinkTime; // save the first drink time
-            }
-            double newBac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+            double newBac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, drinkAmount, r, weight);
 
             // Send both to the server, using same time
-            String formatStringOld = "type=add&drinktime=%s&drinkamount=0&currbac=%.3f";
-            String paramsOld = String.format(formatStringOld, drinkTime, bac);
+            String formatStringOld = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
+            String paramsOld = String.format(formatStringOld, System.currentTimeMillis(), 0, bac);
             new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                     AccessToken.getCurrentAccessToken().getUserId(), paramsOld);
             String formatStringNew = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
-            String paramsNew = String.format(formatStringNew, drinkTime, drinkAmount, newBac);
+            String paramsNew = String.format(formatStringNew, System.currentTimeMillis(), drinkAmount, newBac);
             new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                     AccessToken.getCurrentAccessToken().getUserId(), paramsNew);
 
@@ -152,7 +144,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         String message = getResources().getString(R.string.emergency_message_format_string,
                 contactname, firstname, lastname);
 
-        if ((BAC >= threshold) && !hasTexted && (num != null)) {
+        if ((BAC >= threshold) && !hasTexted && (num != null) && !num.isEmpty()) {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean("hasTexted", true);
@@ -184,14 +176,7 @@ public class DrinkLogActivity extends AppCompatActivity {
      */
     public void addDrinks(double drinks) {
         drinkAmount = drinks;
-        drinkTime = System.currentTimeMillis();
         newDrinkFlag = true;
-
-//        if (bac_num_drinks == 0) {
-//            millis = System.currentTimeMillis();
-//        }
-//        num_drinks += drinks;
-//        bac_num_drinks += drinks;
         refreshDisplay();
     }
 
@@ -201,13 +186,10 @@ public class DrinkLogActivity extends AppCompatActivity {
     public void resetDrink() {
         // TODO: connect to server
         num_drinks = 0;
-        bac_num_drinks = 0;
-        millis = 0;
         refreshDisplay();
     }
 
     public void refreshBAC(View view) {
-        // displayBAC();
         refreshDisplay();
     }
 
@@ -232,7 +214,10 @@ public class DrinkLogActivity extends AppCompatActivity {
                         editor.apply();
 
                         // save a final bac
-                        double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+                        refreshDisplay();
+                        //double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+                        double bac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, 0, r, weight);
+
                         String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.3f";
                         String params = String.format(formatString, System.currentTimeMillis(), 0, bac);
                         new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
@@ -377,31 +362,30 @@ public class DrinkLogActivity extends AppCompatActivity {
                 if (obj.length() > 0) {
                     JSONObject session = obj.getJSONObject(0);
                     JSONArray drinkLogs = session.getJSONArray("drinklogs");
-                    int index = 0;
-                    long firstDrink = 0;
-                    try {
-                        index = session.getInt("baccalcindex");
-                    } catch(Exception e) {}
-                    try {
-                        firstDrink = drinkLogs.getJSONObject(index).getLong("drinktime");
-                    } catch(Exception e) {}
+                    int index = drinkLogs.length() - 1;
+
+                    //calculate total number of drinks
                     double drinks = 0; // total number of drinks
-                    double bac_drinks = 0; // number of drinks for bac calc
                     for (int i = 0; i < drinkLogs.length(); i++) {
                         double amount = drinkLogs.getJSONObject(i).getDouble("drinkamount");
                         drinks += amount;
-                        if (i >= index)
-                            bac_drinks += amount;
                     }
                     num_drinks = drinks;
-                    bac_num_drinks = bac_drinks;
-                    millis = firstDrink;
+
+                    // locally save prevBAC and prevDrinkTime
+                    prevBAC = 0;
+                    prevDrinkTime = 0;
+                    try {
+                        prevBAC = drinkLogs.getJSONObject(index).getDouble("currbac");
+                        prevDrinkTime = drinkLogs.getJSONObject(index).getLong("drinktime");
+                    } catch(Exception e) {}
+
                     displayBAC();
                     displayDrinks();
                 } else { // no such session! shouldn't happen, set to 0 in case
                     num_drinks = 0;
-                    bac_num_drinks = 0;
-                    millis = 0;
+                    prevBAC = 0;
+                    prevDrinkTime = 0;
 
                     displayBAC();
                     displayDrinks();
