@@ -1,17 +1,19 @@
 package cos333.project_corgis;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,16 +31,12 @@ public class DrinkLogActivity extends AppCompatActivity {
     private double num_drinks = 0;
 
     // Variables for BAC Calculation.
-    // number of drinks since 0 BAC.
-    private double bac_num_drinks = 0;
-    // time of first drink.
-    private long millis = 0;
+    private double prevBAC = 0;
+    private long prevDrinkTime = 0;
 
     // Variables for server-based BAC calculation.
     // amount of latest drink
     private double drinkAmount = 0;
-    // time of latest drink
-    private long drinkTime = 0;
     // Flag to use latest values in BAC calculation
     private boolean newDrinkFlag = false;
 
@@ -57,6 +55,21 @@ public class DrinkLogActivity extends AppCompatActivity {
 
     private double threshold = 0.08;
     private boolean hasTexted;
+
+    // flag for saving night at the end of bac calculation refresh
+    private boolean saveNight = false;
+
+    // flag for the second add
+    private boolean flagAddDrink = false;
+    // bac for the second add O:
+    private double addBac;
+
+    // stuff to disable while waiting
+    private ImageButton plusOne;
+    private ImageButton plusHalf;
+    private Button endButt;
+    // For helping to wait for the server
+    private long mLastClickTime;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -98,6 +111,11 @@ public class DrinkLogActivity extends AppCompatActivity {
         else
             r = 0.55; // L/kg
 
+        // initialize buttons
+        plusOne = (ImageButton) findViewById(R.id.plusOneButton);
+        plusHalf = (ImageButton) findViewById(R.id.plusHalfButton);
+        endButt = (Button) findViewById(R.id.end_night_button);
+
         refreshDisplay();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -106,29 +124,23 @@ public class DrinkLogActivity extends AppCompatActivity {
     }
 
     /**
-     * Calculate the BAC level
+     * Calculate the BAC level. Called from displayBAC(), which is called after GET request.
      */
     private double calcBAC() {
         // Curr bac from server.
-        double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+        double bac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, 0, r, weight);
 
         if (newDrinkFlag) {
             num_drinks += drinkAmount;
-            bac_num_drinks += drinkAmount;
-            if (millis == 0) {
-                millis = drinkTime; // save the first drink time
-            }
-            double newBac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
+            double newBac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, drinkAmount, r, weight);
+            addBac = newBac;
 
             // Send both to the server, using same time
-            String formatStringOld = "type=add&drinktime=%s&drinkamount=0&currbac=%.3f";
-            String paramsOld = String.format(formatStringOld, drinkTime, bac);
+            flagAddDrink = true;
+            String formatStringOld = "type=add&drinktime=%s&drinkamount=%s&currbac=%.7f";
+            String paramsOld = String.format(formatStringOld, System.currentTimeMillis(), 0, bac);
             new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                     AccessToken.getCurrentAccessToken().getUserId(), paramsOld);
-            String formatStringNew = "type=add&drinktime=%s&drinkamount=%s&currbac=%.3f";
-            String paramsNew = String.format(formatStringNew, drinkTime, drinkAmount, newBac);
-            new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                    AccessToken.getCurrentAccessToken().getUserId(), paramsNew);
 
             newDrinkFlag = false;
             return newBac;
@@ -152,7 +164,7 @@ public class DrinkLogActivity extends AppCompatActivity {
         String message = getResources().getString(R.string.emergency_message_format_string,
                 contactname, firstname, lastname);
 
-        if ((BAC >= threshold) && !hasTexted && (num != null)) {
+        if ((BAC >= threshold) && !hasTexted && (num != null) && !num.isEmpty()) {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean("hasTexted", true);
@@ -171,10 +183,16 @@ public class DrinkLogActivity extends AppCompatActivity {
     }
 
     public void addOneDrink(View view) {
+        if (!updateClick()) {
+            return;
+        }
         addDrinks(1);
     }
 
     public void addHalfDrink(View view) {
+        if (!updateClick()) {
+            return;
+        }
         addDrinks(0.5);
     }
 
@@ -184,37 +202,22 @@ public class DrinkLogActivity extends AppCompatActivity {
      */
     public void addDrinks(double drinks) {
         drinkAmount = drinks;
-        drinkTime = System.currentTimeMillis();
         newDrinkFlag = true;
-
-//        if (bac_num_drinks == 0) {
-//            millis = System.currentTimeMillis();
-//        }
-//        num_drinks += drinks;
-//        bac_num_drinks += drinks;
         refreshDisplay();
     }
 
-    /**
-     * Resets drink with no argument.
-     */
-    public void resetDrink() {
-        // TODO: connect to server
-        num_drinks = 0;
-        bac_num_drinks = 0;
-        millis = 0;
-        refreshDisplay();
-    }
 
     public void refreshBAC(View view) {
-        // displayBAC();
         refreshDisplay();
     }
 
     /**
      * Called to end a session. User is prompted whether or not to save the session.
      */
-    public void endSession() {
+    public void endSession(View view) {
+        if (!updateClick()) {
+            return;
+        }
         AlertDialog confirm;
         AlertDialog.Builder builder  = new AlertDialog.Builder(this);
 
@@ -232,11 +235,8 @@ public class DrinkLogActivity extends AppCompatActivity {
                         editor.apply();
 
                         // save a final bac
-                        double bac = HolicUtil.calcBAC(millis, bac_num_drinks, r, weight);
-                        String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.3f";
-                        String params = String.format(formatString, System.currentTimeMillis(), 0, bac);
-                        new SaveNightAsyncTask().execute(getResources().getString(R.string.server_currsession) +
-                                AccessToken.getCurrentAccessToken().getUserId(), params);
+                        saveNight = true;
+                        refreshDisplay();
                     }
                 });
 
@@ -261,9 +261,59 @@ public class DrinkLogActivity extends AppCompatActivity {
         confirm.show();
     }
 
+    public void undo(View view) {
+        AlertDialog confirm;
+        AlertDialog.Builder builder = new AlertDialog.Builder(DrinkLogActivity.this);
+
+        builder.setMessage(R.string.undo_confirm_message);
+        builder.setTitle(R.string.undo_confirm_title);
+        builder.setCancelable(true);
+
+        builder.setNeutralButton(
+                R.string.cancel,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+        builder.setPositiveButton(R.string.undo,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String params = "type=remove";
+                        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId(), params);
+                    }
+                });
+        confirm = builder.create();
+        confirm.show();
+    }
+
     public void refreshDisplay() {
+        disableButtons();
         new GetAsyncTask().execute(getResources().getString(R.string.server_currsession) +
                 AccessToken.getCurrentAccessToken().getUserId());
+    }
+
+    public void disableButtons() {
+        plusOne.setEnabled(false);
+        plusHalf.setEnabled(false);
+        endButt.setEnabled(false);
+    }
+    public void enableButtons() {
+        plusOne.setEnabled(true);
+        plusHalf.setEnabled(true);
+        endButt.setEnabled(true);
+    }
+
+    // Updates the last click time. Used for preventing double clicking of buttons while waiting
+    // for server response.
+    public boolean updateClick() {
+        // Double-clicking prevention, using threshold of 1000 ms
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+            return false;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+        return true;
     }
 
     @Override
@@ -306,29 +356,27 @@ public class DrinkLogActivity extends AppCompatActivity {
         client.disconnect();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_drinklog, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_drinklog, menu);
+//        return true;
+//    }
 
     /**
      * Handles menu selection.
-     * @param item
-     * @return
      */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.reset_drink:
-                endSession();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle item selection
+//        switch (item.getItemId()) {
+//            case R.id.reset_drink:
+//                endSession();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     //Async task to delete the session without saving
     private class DeleteAsyncTask extends AsyncTask<String, Void, String> {
@@ -342,8 +390,9 @@ public class DrinkLogActivity extends AppCompatActivity {
             DrinkLogActivity.this.finish();
         }
     }
-    //Async task to end and save night
-    private class SaveNightAsyncTask extends AsyncTask<String, Void, String> {
+
+    //Async task to put new session info (e.g. set baccalcindex; add drinks)
+    private class PutAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... url) {
             return RestClient.Put(url[0], url[1]);
@@ -351,15 +400,24 @@ public class DrinkLogActivity extends AppCompatActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-            DrinkLogActivity.this.finish();
-        }
-    }
+            if (saveNight) {
+                // callback for save night
+                saveNight = false;
+                DrinkLogActivity.this.finish();
+                return;
+            }
+            if (flagAddDrink) {
+                // callback for add 0 drink
+                String formatStringNew = "type=add&drinktime=%s&drinkamount=%s&currbac=%.7f";
+                String paramsNew = String.format(formatStringNew, System.currentTimeMillis(), drinkAmount, addBac);
+                new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                        AccessToken.getCurrentAccessToken().getUserId(), paramsNew);
 
-    //Async task to put new session info (e.g. set baccalcindex; add drinks)
-    private class PutAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... url) {
-            return RestClient.Put(url[0], url[1]);
+                flagAddDrink = false;
+            } else {
+                // callback for undo
+                refreshDisplay();
+            }
         }
     }
 
@@ -377,37 +435,46 @@ public class DrinkLogActivity extends AppCompatActivity {
                 if (obj.length() > 0) {
                     JSONObject session = obj.getJSONObject(0);
                     JSONArray drinkLogs = session.getJSONArray("drinklogs");
-                    int index = 0;
-                    long firstDrink = 0;
-                    try {
-                        index = session.getInt("baccalcindex");
-                    } catch(Exception e) {}
-                    try {
-                        firstDrink = drinkLogs.getJSONObject(index).getLong("drinktime");
-                    } catch(Exception e) {}
+                    int index = drinkLogs.length() - 1;
+
+                    //calculate total number of drinks
                     double drinks = 0; // total number of drinks
-                    double bac_drinks = 0; // number of drinks for bac calc
                     for (int i = 0; i < drinkLogs.length(); i++) {
                         double amount = drinkLogs.getJSONObject(i).getDouble("drinkamount");
                         drinks += amount;
-                        if (i >= index)
-                            bac_drinks += amount;
                     }
                     num_drinks = drinks;
-                    bac_num_drinks = bac_drinks;
-                    millis = firstDrink;
+
+                    // locally save prevBAC and prevDrinkTime
+                    prevBAC = 0;
+                    prevDrinkTime = 0;
+                    try {
+                        prevBAC = drinkLogs.getJSONObject(index).getDouble("currbac");
+                        prevDrinkTime = drinkLogs.getJSONObject(index).getLong("drinktime");
+                    } catch(Exception e) {}
+
+                    if (saveNight) {
+                        double bac = HolicUtil.calcBAC(prevBAC, prevDrinkTime, 0, r, weight);
+
+                        String formatString = "type=end&drinktime=%s&drinkamount=%s&currbac=%.7f";
+                        String params = String.format(formatString, System.currentTimeMillis(), 0, bac);
+                        new PutAsyncTask().execute(getResources().getString(R.string.server_currsession) +
+                                AccessToken.getCurrentAccessToken().getUserId(), params);
+                    }
+
                     displayBAC();
                     displayDrinks();
                 } else { // no such session! shouldn't happen, set to 0 in case
                     num_drinks = 0;
-                    bac_num_drinks = 0;
-                    millis = 0;
+                    prevBAC = 0;
+                    prevDrinkTime = 0;
 
                     displayBAC();
                     displayDrinks();
                 }
             } catch(Exception e) {
             }
+            enableButtons();
         }
     }
 }

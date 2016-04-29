@@ -54,7 +54,6 @@ public class LandingActivity extends AppCompatActivity {
         nightButton.setEnabled(true);
     }
 
-    // TODO: Open the drink log activity. Modify the drink log activity to get gender and weight
     // from the server instead of the other page.
     public void startDrinkActivity(View view) {
         // Double-clicking prevention, using threshold of 1000 ms
