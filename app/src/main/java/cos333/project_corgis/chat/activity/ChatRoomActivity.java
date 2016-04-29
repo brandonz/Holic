@@ -179,8 +179,10 @@ public class ChatRoomActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.e(TAG, "response: " + response);
 
+
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
                 String userId = fbid;
-                String userName = title;
+                String userName = pref.getString("fname", "") + pref.getString("lname", "");
                 User user = new User(userId, userName, null);
 
                 Message nmessage = new Message();
