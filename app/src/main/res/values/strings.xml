@@ -38,6 +38,9 @@
     <string name="enter_valid_weight">Please give a valid weight</string>
     <string name="enter_threshold">To enable automatic texting, threshold is required.</string>
     <string name="enter_number">To enable automatic texting, a phone number is required.</string>
+    <string name="invalid_friend">Your entered friend is invalid. Have they installed Holic?</string>
+    <string name="duplicate_friend">You have already added this friend.</string>
+    <string name="server_unreachable">Unable to reach the server.</string>
     <string name="error_message">Error Message</string>
     <string name="gender_disclaimer">
         *Physical body type is needed to calculate your BAC more accurately.

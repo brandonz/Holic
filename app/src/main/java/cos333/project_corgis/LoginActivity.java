@@ -21,6 +21,8 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -37,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_activity);
         info = (TextView)findViewById(R.id.info);
         loginButton = (LoginButton)findViewById(R.id.login_button);
+        loginButton.setReadPermissions(Arrays.asList("user_friends"));
 
         if (isLoggedIn()) {
             new GetAsyncTask().execute(getResources().getString(R.string.server)

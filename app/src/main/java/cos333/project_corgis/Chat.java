@@ -1,6 +1,7 @@
 package cos333.project_corgis;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,12 +20,16 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import cos333.project_corgis.chat.activity.ChatMainActivity;
 import cos333.project_corgis.chat.activity.ChatRoomActivity;
@@ -34,8 +39,15 @@ import cos333.project_corgis.chat.activity.ChatRoomActivity;
  */
 public class Chat extends AppCompatActivity{
 
-    // List of users to add to the chat.
-    private ArrayList<String> logs = new ArrayList<>();
+    // All fb friends on Holic, courtesy of FB
+    private Hashtable<String, String> fbHolicFriends = new Hashtable<>();
+    // The people the user wants to add
+    private ArrayList<String> names = new ArrayList<>();
+    // The ids of the people the user wants to add. Indices should match up with names.
+    private ArrayList<String> ids = new ArrayList<>();
+    // Loading popup. Used for getting fb friends.
+    private ProgressDialog loading;
+
     private RecyclerView recyclerView;
     private ChatAdapter cAdapter;
     private Intent intent;
@@ -50,24 +62,71 @@ public class Chat extends AppCompatActivity{
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        cAdapter = new ChatAdapter(logs);
+        cAdapter = new ChatAdapter(names);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(cAdapter);
+
+
+        // initialize loading screen for friend population
+        loading = new ProgressDialog(this);
+        loading.setTitle(getResources().getString(R.string.loading));
+        loading.setMessage(getResources().getString(R.string.loading_message));
+        loading.setCancelable(false);
+        loading.show();
+        // populate friends
+        getFriends();
 
         //Add item when 'Enter' is clicked
         final Button enter = (Button) findViewById(R.id.btn_enter);
         enter.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 EditText editText = (EditText) findViewById(R.id.add_user);
-                String fb_id = editText.getText().toString();
-                logs.add(fb_id);
-                // instead, you can add names. we will have pulled friends.
-                // if the name matches, add the id (two separate lists).
-                // otherwise popup: invalid name
-                cAdapter.notifyDataSetChanged();
-                editText.setText("");
+//                String fb_id = editText.getText().toString();
+//                logs.add(fb_id);
+                String name = editText.getText().toString();
+                if (fbHolicFriends.containsKey(name)) {
+                    if (names.contains(name)) {
+                        // already added friend, notify user and do nothing
+                        AlertDialog confirm;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this);
+
+                        builder.setTitle(R.string.error_message);
+                        builder.setMessage(R.string.duplicate_friend);
+                        builder.setCancelable(true);
+
+                        builder.setPositiveButton(R.string.okay,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                    }
+                                });
+                        confirm = builder.create();
+                        confirm.show();
+                    } else {
+                        String id = fbHolicFriends.get(name);
+                        names.add(name);
+                        ids.add(id);
+                        cAdapter.notifyDataSetChanged();
+                        editText.setText("");
+                    }
+                } else {
+                    // invalid name, notify user and do nothing
+                    AlertDialog confirm;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this);
+
+                    builder.setTitle(R.string.error_message);
+                    builder.setMessage(R.string.invalid_friend);
+                    builder.setCancelable(true);
+
+                    builder.setPositiveButton(R.string.okay,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                }
+                            });
+                    confirm = builder.create();
+                    confirm.show();
+                }
             }
         });
 
@@ -90,6 +149,57 @@ public class Chat extends AppCompatActivity{
 
     }
 
+    // Gets user's friends using Holic from Facebook, parses into name -> id dict
+    public void getFriends() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        String id = pref.getString("id", "");
+        String friendParam = String.format("/%s/friends", id);
+        /* make the API call to FB */
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                friendParam,
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        try {
+                            JSONArray users = response.getJSONObject().getJSONArray("data");
+                            int numUsers = users.length();
+                            for (int i = 0; i < numUsers; i++) {
+                                try {
+                                    JSONObject user = users.getJSONObject(i);
+                                    String id = user.getString("id");
+                                    String name = user.getString("name");
+                                    fbHolicFriends.put(name, id);
+                                } catch (Exception e) {
+                                    System.out.println("to catch an exception");
+                                }
+                            }
+                            loading.dismiss();
+                        } catch (Exception e) {
+                            loading.dismiss();
+                            // can't get users
+                            AlertDialog confirm;
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this);
+
+                            builder.setTitle(R.string.error_message);
+                            builder.setMessage(R.string.server_unreachable);
+                            builder.setCancelable(false);
+
+                            builder.setPositiveButton(R.string.okay,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            Chat.this.finish();
+                                        }
+                                    });
+                            confirm = builder.create();
+                            confirm.show();
+                        }
+                    }
+                }
+        ).executeAsync();
+    }
+
     public void sendInfo(View view) {
         Profile currProf = Profile.getCurrentProfile();
         String id = currProf.getId();
@@ -105,9 +215,9 @@ public class Chat extends AppCompatActivity{
         String fbids = id + ",";
 
         //Creates format string for all fbids
-        for (int i = 0; i < logs.size(); i++) {
-            fbids = fbids.concat(logs.get(i));
-            if (i != logs.size()-1)
+        for (int i = 0; i < ids.size(); i++) { //instead of logs use people
+            fbids = fbids.concat(ids.get(i));
+            if (i != ids.size()-1)
                 fbids = fbids.concat(",");
         }
         String urlParameters = String.format(formatString, fbids, name);
