@@ -69,7 +69,6 @@ public class ChatMainActivity extends AppCompatActivity {
          * */
         // TODO: set shared pref for username, it works for a beta
         if (MyApplication.getInstance().getPrefManager().getUser() == null) {
-//            launchLoginActivity();
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
             User user = new User("1",
                     pref.getString("fname", ""),
@@ -83,69 +82,70 @@ public class ChatMainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
-        /**
-         * Broadcast receiver calls in two scenarios
-         * 1. gcm registration is completed
-         * 2. when new push notification is received
-         * */
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                // checking for type intent filter
-                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-                    // gcm successfully registered
-                    // now subscribe to `global` topic to receive app wide notifications
-                    subscribeToGlobalTopic();
-
-                } else if (intent.getAction().equals(Config.SENT_TOKEN_TO_SERVER)) {
-                    // gcm registration id is stored in our server's MySQL
-                    Log.e(TAG, "GCM registration id is sent to our server");
-
-                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-                    // new push notification is received
-                    handlePushNotification(intent);
-                }
-            }
-        };
-
-        chatRoomArrayList = new ArrayList<>();
-        mAdapter = new ChatRoomsAdapter(this, chatRoomArrayList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(
-                getApplicationContext()
-        ));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
-
-        recyclerView.addOnItemTouchListener(new ChatRoomsAdapter.RecyclerTouchListener(getApplicationContext(), recyclerView, new ChatRoomsAdapter.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                // when chat is clicked, launch full chat thread activity
-                ChatRoom chatRoom = chatRoomArrayList.get(position);
-                Intent intent = new Intent(ChatMainActivity.this, ChatRoomActivity.class);
-                intent.putExtra("chat_room_id", chatRoom.getId());
-                intent.putExtra("name", chatRoom.getName());
-                startActivity(intent);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
+        // TODO: move these to fragments!
+//        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+//
+//        /**
+//         * Broadcast receiver calls in two scenarios
+//         * 1. gcm registration is completed
+//         * 2. when new push notification is received
+//         * */
+//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//
+//                // checking for type intent filter
+//                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
+//                    // gcm successfully registered
+//                    // now subscribe to `global` topic to receive app wide notifications
+//                    subscribeToGlobalTopic();
+//
+//                } else if (intent.getAction().equals(Config.SENT_TOKEN_TO_SERVER)) {
+//                    // gcm registration id is stored in our server's MySQL
+//                    Log.e(TAG, "GCM registration id is sent to our server");
+//
+//                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+//                    // new push notification is received
+//                    handlePushNotification(intent);
+//                }
+//            }
+//        };
+//
+//        chatRoomArrayList = new ArrayList<>();
+//        mAdapter = new ChatRoomsAdapter(this, chatRoomArrayList);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        recyclerView.setLayoutManager(layoutManager);
+//        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(
+//                getApplicationContext()
+//        ));
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setAdapter(mAdapter);
+//
+//        recyclerView.addOnItemTouchListener(new ChatRoomsAdapter.RecyclerTouchListener(getApplicationContext(), recyclerView, new ChatRoomsAdapter.ClickListener() {
+//            @Override
+//            public void onClick(View view, int position) {
+//                // when chat is clicked, launch full chat thread activity
+//                ChatRoom chatRoom = chatRoomArrayList.get(position);
+//                Intent intent = new Intent(ChatMainActivity.this, ChatRoomActivity.class);
+//                intent.putExtra("chat_room_id", chatRoom.getId());
+//                intent.putExtra("name", chatRoom.getName());
+//                startActivity(intent);
+//            }
+//
+//            @Override
+//            public void onLongClick(View view, int position) {
+//
+//            }
+//        }));
 
         /**
          * Always check for google play services availability before
          * proceeding further with GCM
          * */
-        if (checkPlayServices()) {
-            registerGCM();
-            fetchChatRooms();
-        }
+//        if (checkPlayServices()) {
+//            registerGCM();
+//            fetchChatRooms();
+//        }
 
         //Add item when 'Enter' is clicked
 //        final Button newChat = (Button) findViewById(R.id.add_new_chat);
@@ -308,13 +308,6 @@ public class ChatMainActivity extends AppCompatActivity {
             intent.putExtra(GcmIntentService.TOPIC, "topic_" + cr.getId());
             startService(intent);
         }
-    }
-
-    private void launchLoginActivity() {
-        Intent intent = new Intent(ChatMainActivity.this, ChatLoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
     }
 
     @Override

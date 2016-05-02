@@ -22,7 +22,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_chat_main"/>
+    <!-- TODO: move this to a fragment -->
+    <!--<include layout="@layout/content_chat_main"/>-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
