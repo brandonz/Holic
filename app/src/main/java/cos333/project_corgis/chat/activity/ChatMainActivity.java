@@ -8,7 +8,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cos333.project_corgis.Chat;
 import cos333.project_corgis.R;
@@ -49,6 +55,8 @@ import cos333.project_corgis.chat.helper.SimpleDividerItemDecoration;
 import cos333.project_corgis.chat.model.ChatRoom;
 import cos333.project_corgis.chat.model.Message;
 import cos333.project_corgis.chat.model.User;
+import cos333.project_corgis.chat.activity.OneFragment;
+import cos333.project_corgis.chat.activity.TwoFragment;
 
 public class ChatMainActivity extends AppCompatActivity {
 
@@ -58,6 +66,9 @@ public class ChatMainActivity extends AppCompatActivity {
     private ArrayList<ChatRoom> chatRoomArrayList;
     private ChatRoomsAdapter mAdapter;
     private RecyclerView recyclerView;
+
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +92,15 @@ public class ChatMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // TABS
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
         // TODO: move these to fragments!
 //        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -374,5 +394,39 @@ public class ChatMainActivity extends AppCompatActivity {
 //        return super.onOptionsItemSelected(menuItem);
 //    }
 
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new OneFragment(), "CHAT");
+        adapter.addFragment(new TwoFragment(), "BAC");
+        viewPager.setAdapter(adapter);
+    }
 
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+    }
 }
