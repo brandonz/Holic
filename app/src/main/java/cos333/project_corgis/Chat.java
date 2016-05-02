@@ -34,7 +34,7 @@ import cos333.project_corgis.chat.activity.ChatRoomActivity;
  */
 public class Chat extends AppCompatActivity{
 
-    // Raw data of logs for each session.
+    // List of users to add to the chat.
     private ArrayList<String> logs = new ArrayList<>();
     private RecyclerView recyclerView;
     private ChatAdapter cAdapter;
@@ -63,6 +63,9 @@ public class Chat extends AppCompatActivity{
                 EditText editText = (EditText) findViewById(R.id.add_user);
                 String fb_id = editText.getText().toString();
                 logs.add(fb_id);
+                // instead, you can add names. we will have pulled friends.
+                // if the name matches, add the id (two separate lists).
+                // otherwise popup: invalid name
                 cAdapter.notifyDataSetChanged();
                 editText.setText("");
             }

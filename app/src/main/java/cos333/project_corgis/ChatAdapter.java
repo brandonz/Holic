@@ -12,40 +12,38 @@ import java.util.Date;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
-    private ArrayList<String> logList;
+    private ArrayList<String> newPeople;
 
     public class ChatViewHolder extends RecyclerView.ViewHolder {
         public TextView userAdded;
 
         public ChatViewHolder(View view) {
             super(view);
-            //TODO change R.id.date
-            userAdded = (TextView) view.findViewById(R.id.date);
+            userAdded = (TextView) view.findViewById(R.id.name);
         }
     }
 
-    public ChatAdapter(ArrayList<String> logs) {
-        this.logList = logs;
+    public ChatAdapter(ArrayList<String> people) {
+        this.newPeople = people;
     }
 
     @Override
     public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //TODO change stats_row
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.stats_row, parent, false);
+                .inflate(R.layout.chat_add_person, parent, false);
 
         return new ChatViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(ChatViewHolder holder, int position) {
-        String user = logList.get(position);
+        String user = newPeople.get(position);
         holder.userAdded.setText(user);
     }
 
     @Override
     public int getItemCount() {
-        return logList.size();
+        return newPeople.size();
     }
 }
 
