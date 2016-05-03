@@ -67,11 +67,11 @@
         <activity
             android:name=".DrinkLogActivity"
             android:label="@string/title_activity_drink_log"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".LandingActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cos333.project_corgis.MainActivity" />
+                android:value=".LandingActivity" />
         </activity>
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -110,11 +110,11 @@
         <activity
             android:name=".EditProfile"
             android:label="@string/title_activity_edit_profile"
-            android:parentActivityName=".ViewProfile"
+            android:parentActivityName=".LandingActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cos333.project_corgis.ViewProfile" />
+                android:value="cos333.project_corgis.LandingActivity" />
         </activity>
         <activity
             android:name=".Stats"
@@ -130,7 +130,12 @@
         <activity
             android:name=".chat.activity.ChatMainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:parentActivityName=".LandingActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cos333.project_corgis.LandingActivity" />
+        </activity>
         <activity
             android:name=".chat.activity.ChatLoginActivity"
             android:label="@string/app_name"

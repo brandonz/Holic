@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text= "@string/create_profile"
+                android:text= "@string/title_activity_edit_profile"
                 android:id="@+id/create_profile_title"
                 android:layout_gravity="center_horizontal" />
 

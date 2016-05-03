@@ -1,14 +1,19 @@
 package cos333.project_corgis.chat.activity;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +33,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.facebook.AccessToken;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -39,6 +45,7 @@ import java.util.ArrayList;
 
 import cos333.project_corgis.Chat;
 import cos333.project_corgis.R;
+import cos333.project_corgis.RestClient;
 import cos333.project_corgis.chat.adapter.ChatRoomsAdapter;
 import cos333.project_corgis.chat.app.Config;
 import cos333.project_corgis.chat.app.EndPoints;
@@ -58,6 +65,10 @@ public class ChatMainActivity extends AppCompatActivity {
     private ArrayList<ChatRoom> chatRoomArrayList;
     private ChatRoomsAdapter mAdapter;
     private RecyclerView recyclerView;
+    // loading dialog for initial load. SwipeRefreshLayout should cover all other loads.
+    private ProgressDialog loading;
+    // the swip refresh layout that contains the recycler view
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +93,13 @@ public class ChatMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // initialize loading screen for chats population
+        loading = new ProgressDialog(this);
+        loading.setTitle(getResources().getString(R.string.loading));
+        loading.setMessage(getResources().getString(R.string.loading_message));
+        loading.setCancelable(false);
+        loading.show();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -134,7 +152,35 @@ public class ChatMainActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
+                final ChatRoom chatRoom = chatRoomArrayList.get(position);
+                // popup for delete
+                AlertDialog confirm;
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatMainActivity.this);
 
+                builder.setTitle(chatRoom.getName()); // set to name of chat
+                builder.setMessage(R.string.delete_confirm_message);
+                builder.setCancelable(false);
+
+                builder.setNegativeButton(
+                        R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+
+                builder.setPositiveButton(R.string.delete,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                String formatStr = "type=removeuser&fbid=%s";
+                                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                                String fbid = pref.getString("id", "");
+                                String params = String.format(formatStr, fbid);
+                                new PutAsyncTask().execute(getResources().getString(R.string.server_chat) +
+                                        chatRoom.getId(), params);
+                            }
+                        });
+                confirm = builder.create();
+                confirm.show();
             }
         }));
 
@@ -146,6 +192,15 @@ public class ChatMainActivity extends AppCompatActivity {
             registerGCM();
             fetchChatRooms();
         }
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                refreshItems();
+            }
+        });
 
         //Add item when 'Enter' is clicked
 //        final Button newChat = (Button) findViewById(R.id.add_new_chat);
@@ -214,8 +269,9 @@ public class ChatMainActivity extends AppCompatActivity {
      */
     private void fetchChatRooms() {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        String id = pref.getString("id", "");
         StringRequest strReq = new StringRequest(Request.Method.GET,
-                "http://holic-server.herokuapp.com/api/chats/user/" + pref.getString("id", ""), new Response.Listener<String>() {
+                getResources().getString(R.string.server_chat_user) + id, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -235,6 +291,40 @@ public class ChatMainActivity extends AppCompatActivity {
                         cr.setTimestamp(chatRoomsObj.getString("recent_time"));
                         chatRoomArrayList.add(cr);
                     }
+
+                    // Load complete
+                    onItemsLoadComplete();
+
+                    loading.dismiss();
+
+                    // check for error flag
+//                    if (obj.getBoolean("error") == false) {
+//                        JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
+//                        for (int i = 0; i < chatRoomsArray.length(); i++) {
+//                            JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
+//
+//                            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+//                            System.out.println(pref.getString("id", ""));
+//
+//                            ChatRoom cr = new ChatRoom();
+//                            cr.setId(chatRoomsObj.getString("chat_room_id"));
+//                            cr.setName(chatRoomsObj.getString("name"));
+//                            cr.setLastMessage("");
+//                            cr.setUnreadCount(0);
+//                            cr.setTimestamp(chatRoomsObj.getString("created_at"));
+//                            ChatRoom cr = new ChatRoom();
+//                            cr.setId("" + i);
+//                            cr.setName("Test " + i);
+//                            cr.setLastMessage("");
+//                            cr.setUnreadCount(i);
+//                            cr.setTimestamp(chatRoomsObj.getString("created_at"));
+//                            chatRoomArrayList.add(cr);
+//                        }
+//
+//                    } else {
+//                        // error in fetching chat rooms
+//                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
+//                    }
 
                 } catch (JSONException e) {
                     Log.e(TAG, "json parsing error: " + e.getMessage());
@@ -335,6 +425,26 @@ public class ChatMainActivity extends AppCompatActivity {
         return true;
     }
 
+
+    // Refresh the chat items. Called on swipe refresh or when chat deleted
+    void refreshItems() {
+        // Load items
+        // ...
+        if (checkPlayServices()) {
+            chatRoomArrayList.clear();
+            fetchChatRooms();
+        }
+    }
+
+    // called when the load (fetchChatRooms) finishes
+    void onItemsLoadComplete() {
+        // Update the adapter and notify data set changed
+        mAdapter.notifyDataSetChanged();
+
+        // Stop refresh animation
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        // Inflate the menu; this adds items to the action bar if it is present.
@@ -351,6 +461,19 @@ public class ChatMainActivity extends AppCompatActivity {
 //        }
 //        return super.onOptionsItemSelected(menuItem);
 //    }
+
+    //Async task to remove user
+    private class PutAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Put(url[0], url[1]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            refreshItems();
+        }
+    }
 
 
 }
