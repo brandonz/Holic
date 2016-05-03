@@ -1,9 +1,5 @@
 package cos333.project_corgis.chat.app;
 
-/**
- * Created by Lincoln on 14/10/15.
- */
-
 import android.app.Application;
 import android.content.Intent;
 import android.text.TextUtils;

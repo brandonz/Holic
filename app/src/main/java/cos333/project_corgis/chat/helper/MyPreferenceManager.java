@@ -6,9 +6,6 @@ import android.util.Log;
 
 import cos333.project_corgis.chat.model.User;
 
-/**
- * Created by Lincoln on 07/01/16.
- */
 public class MyPreferenceManager {
 
     private String TAG = MyPreferenceManager.class.getSimpleName();

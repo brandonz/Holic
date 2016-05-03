@@ -3,6 +3,7 @@
     <string name="app_name">Holic</string>
     <string name="server">https://holic-server.herokuapp.com/api/users/</string>
     <string name="server_chat">https://holic-server.herokuapp.com/api/chats/</string>
+    <string name="server_bac">https://holic-server.herokuapp.com/api/chats/bac/</string>
     <string name="server_chat_user">https://holic-server.herokuapp.com/api/chats/user/</string>
     <string name="server_currsession">https://holic-server.herokuapp.com/api/currsession/</string>
     <string name="server_pastsession">https://holic-server.herokuapp.com/api/pastsessions/</string>

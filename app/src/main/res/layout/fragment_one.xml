@@ -1,0 +1,9 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cos333.project_corgis.chat.activity.OneFragment">
+
+    <include layout="@layout/content_chat_room" />
+
+</RelativeLayout>
