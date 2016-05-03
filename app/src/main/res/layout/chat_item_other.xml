@@ -27,7 +27,8 @@
         android:layout_marginLeft="10dp"
         android:paddingLeft="10dp"
         android:paddingTop="6dp"
-        android:textSize="10dp" />
+        android:textSize="10dp"
+        android:textColor="@color/white" />
 
 
 </RelativeLayout>

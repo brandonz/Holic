@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_chat_main"
-    tools:context=".chat.activity.ChatMainActivity">
+    tools:context=".chat.activity.ChatMainActivity"
+    android:background="@color/bg_gray">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"

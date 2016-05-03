@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:textColor="#444444"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="16dp" />
 
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
-        android:textColor="#888888"
+        android:textColor="@color/white"
         android:layout_marginTop="5dp"
         android:text="Seems gcm will take some time"/>
 
@@ -31,14 +31,15 @@
         android:text="12:00 AM"
         android:textSize="10dp"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        android:textColor="@color/white" />
 
     <TextView android:id="@+id/count"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:gravity="center"
         android:textSize="10dp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:layout_below="@id/timestamp"
         android:layout_marginTop="5dp"
         android:layout_alignParentRight="true"
