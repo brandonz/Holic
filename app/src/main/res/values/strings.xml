@@ -132,6 +132,8 @@
     <string name="create_chat">Create</string>
     <string name="add_person">Add</string>
     <string name="people_in_chat">People in chat:</string>
+    <string name="delete_confirm_message">Delete this chat?</string>
+    <string name="delete">Delete</string>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 

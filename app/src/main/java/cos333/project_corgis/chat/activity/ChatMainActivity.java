@@ -1,11 +1,14 @@
 package cos333.project_corgis.chat.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,6 +33,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.facebook.AccessToken;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -41,6 +45,7 @@ import java.util.ArrayList;
 
 import cos333.project_corgis.Chat;
 import cos333.project_corgis.R;
+import cos333.project_corgis.RestClient;
 import cos333.project_corgis.chat.adapter.ChatRoomsAdapter;
 import cos333.project_corgis.chat.app.Config;
 import cos333.project_corgis.chat.app.EndPoints;
@@ -147,7 +152,35 @@ public class ChatMainActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
+                final ChatRoom chatRoom = chatRoomArrayList.get(position);
+                // popup for delete
+                AlertDialog confirm;
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatMainActivity.this);
 
+                builder.setTitle(chatRoom.getName()); // set to name of chat
+                builder.setMessage(R.string.delete_confirm_message);
+                builder.setCancelable(false);
+
+                builder.setNegativeButton(
+                        R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+
+                builder.setPositiveButton(R.string.delete,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                String formatStr = "type=removeuser&fbid=%s";
+                                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                                String fbid = pref.getString("id", "");
+                                String params = String.format(formatStr, fbid);
+                                new PutAsyncTask().execute(getResources().getString(R.string.server_chat) +
+                                        chatRoom.getId(), params);
+                            }
+                        });
+                confirm = builder.create();
+                confirm.show();
             }
         }));
 
@@ -393,7 +426,7 @@ public class ChatMainActivity extends AppCompatActivity {
     }
 
 
-    // Refresh the chat items. Called on swipe refresh
+    // Refresh the chat items. Called on swipe refresh or when chat deleted
     void refreshItems() {
         // Load items
         // ...
@@ -428,6 +461,19 @@ public class ChatMainActivity extends AppCompatActivity {
 //        }
 //        return super.onOptionsItemSelected(menuItem);
 //    }
+
+    //Async task to remove user
+    private class PutAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            return RestClient.Put(url[0], url[1]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            refreshItems();
+        }
+    }
 
 
 }
