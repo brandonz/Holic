@@ -73,6 +73,9 @@ public class DrinkLogActivity extends AppCompatActivity {
     // For helping to wait for the server
     private long mLastClickTime;
 
+    // loading dialog, reusable?
+    private ProgressDialog loading;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -123,6 +126,12 @@ public class DrinkLogActivity extends AppCompatActivity {
         plusOne = (ImageButton) findViewById(R.id.plusOneButton);
         plusHalf = (ImageButton) findViewById(R.id.plusHalfButton);
         endButt = (ImageButton) findViewById(R.id.end_night_button);
+
+        // initialize loading screen for refreshdisplay
+        loading = new ProgressDialog(this);
+        loading.setTitle(getResources().getString(R.string.loading));
+        loading.setMessage(getResources().getString(R.string.loading_message));
+        loading.setCancelable(false);
 
         refreshDisplay();
 
@@ -211,6 +220,7 @@ public class DrinkLogActivity extends AppCompatActivity {
     public void addDrinks(double drinks) {
         drinkAmount = drinks;
         newDrinkFlag = true;
+        loading.show();
         refreshDisplay();
     }
 
@@ -491,6 +501,7 @@ public class DrinkLogActivity extends AppCompatActivity {
             } catch(Exception e) {
             }
             enableButtons();
+            loading.dismiss();
         }
     }
 }
