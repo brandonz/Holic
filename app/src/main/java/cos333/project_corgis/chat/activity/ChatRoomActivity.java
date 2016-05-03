@@ -6,7 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +38,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cos333.project_corgis.R;
@@ -58,6 +64,9 @@ public class ChatRoomActivity extends AppCompatActivity {
     private Button btnSend;
     private String fbid;
 
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,57 +74,67 @@ public class ChatRoomActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        inputMessage = (EditText) findViewById(R.id.message);
-        btnSend = (Button) findViewById(R.id.btn_send);
-
-        Intent intent = getIntent();
-        chatRoomId = intent.getStringExtra("chat_room_id");
-        title = intent.getStringExtra("name");
-
-        // get user id
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
-        fbid = pref.getString("id", "");
-
-        getSupportActionBar().setTitle(title);
+        // TABS
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if (chatRoomId == null) {
-            Toast.makeText(getApplicationContext(), "Chat room not found!", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
-        messageArrayList = new ArrayList<>();
-
-        // self user id is to identify the message owner
-        String selfUserId = MyApplication.getInstance().getPrefManager().getUser().getId();
-
-        mAdapter = new ChatRoomThreadAdapter(this, messageArrayList, selfUserId);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
-
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-                    // new push message is received
-                    handlePushNotification(intent);
-                }
-            }
-        };
-
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage();
-            }
-        });
-
-        fetchChatThread();
+        // TODO: in fragment
+//        inputMessage = (EditText) findViewById(R.id.message);
+//        btnSend = (Button) findViewById(R.id.btn_send);
+//
+//        Intent intent = getIntent();
+//        chatRoomId = intent.getStringExtra("chat_room_id");
+//        title = intent.getStringExtra("name");
+//
+//        // get user id
+//        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+//        fbid = pref.getString("id", "");
+//
+//        getSupportActionBar().setTitle(title);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//        if (chatRoomId == null) {
+//            Toast.makeText(getApplicationContext(), "Chat room not found!", Toast.LENGTH_SHORT).show();
+//            finish();
+//        }
+//
+//        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+//
+//        messageArrayList = new ArrayList<>();
+//
+//        // self user id is to identify the message owner
+//        String selfUserId = MyApplication.getInstance().getPrefManager().getUser().getId();
+//
+//        mAdapter = new ChatRoomThreadAdapter(this, messageArrayList, selfUserId);
+//
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        recyclerView.setLayoutManager(layoutManager);
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setAdapter(mAdapter);
+//
+//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+//                    // new push message is received
+//                    handlePushNotification(intent);
+//                }
+//            }
+//        };
+//
+//        btnSend.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                sendMessage();
+//            }
+//        });
+//
+//        fetchChatThread();
     }
 
     @Override
@@ -123,15 +142,15 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onResume();
 
         // registering the receiver for new notification
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(Config.PUSH_NOTIFICATION));
-
-        NotificationUtils.clearNotifications();
+//        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+//                new IntentFilter(Config.PUSH_NOTIFICATION));
+//
+//        NotificationUtils.clearNotifications();
     }
 
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
     }
 
@@ -201,44 +220,6 @@ public class ChatRoomActivity extends AppCompatActivity {
                     recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
                 }
 
-//                try {
-//                    JSONObject obj = new JSONObject(response);
-//
-//                    // check for error
-//                    if (obj.getBoolean("error") == false) {
-//                        JSONObject commentObj = obj.getJSONObject("message");
-//
-//                        String commentId = commentObj.getString("message_id");
-//                        String commentText = commentObj.getString("message");
-//                        String createdAt = commentObj.getString("created_at");
-//
-//                        JSONObject userObj = obj.getJSONObject("user");
-//                        String userId = userObj.getString("user_id");
-//                        String userName = userObj.getString("name");
-//                        User user = new User(userId, userName, null);
-//
-//                        Message message = new Message();
-//                        message.setId(commentId);
-//                        message.setMessage(commentText);
-//                        message.setCreatedAt(createdAt);
-//                        message.setUser(user);
-//
-//                        messageArrayList.add(message);
-//
-//                        mAdapter.notifyDataSetChanged();
-//                        if (mAdapter.getItemCount() > 1) {
-//                            // scrolling to bottom of the recycler view
-//                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
-//                        }
-//
-//                    } else {
-//                        Toast.makeText(getApplicationContext(), "" + obj.getString("message"), Toast.LENGTH_LONG).show();
-//                    }
-//
-//                } catch (JSONException e) {
-//                    Log.e(TAG, "json parsing error: " + e.getMessage());
-//                    Toast.makeText(getApplicationContext(), "json parse error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                }
             }
         }, new Response.ErrorListener() {
 
@@ -332,41 +313,6 @@ public class ChatRoomActivity extends AppCompatActivity {
                         recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
                     }
 
-
-                    // check for error
-//                    if (obj.getBoolean("error") == false) {
-//                        JSONArray commentsObj = obj.getJSONArray("messages");
-//
-//                        for (int i = 0; i < commentsObj.length(); i++) {
-//                            JSONObject commentObj = (JSONObject) commentsObj.get(i);
-//
-//                            String commentId = commentObj.getString("message_id");
-//                            String commentText = commentObj.getString("message");
-//                            String createdAt = commentObj.getString("created_at");
-//
-//                            JSONObject userObj = commentObj.getJSONObject("user");
-//                            String userId = userObj.getString("user_id");
-//                            String userName = userObj.getString("username");
-//                            User user = new User(userId, userName, null);
-//
-//                            Message message = new Message();
-//                            message.setId(commentId);
-//                            message.setMessage(commentText);
-//                            message.setCreatedAt(createdAt);
-//                            message.setUser(user);
-//
-//                            messageArrayList.add(message);
-//                        }
-//
-//                        mAdapter.notifyDataSetChanged();
-//                        if (mAdapter.getItemCount() > 1) {
-//                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
-//                        }
-//
-//                    } else {
-//                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
-//                    }
-
                 } catch (JSONException e) {
                     Log.e(TAG, "json parsing error: " + e.getMessage());
                     Toast.makeText(getApplicationContext(), "json parse error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -384,6 +330,42 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         //Adding request to request queue
         MyApplication.getInstance().addToRequestQueue(strReq);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new OneFragment(), "ONE");
+        adapter.addFragment(new TwoFragment(), "TWO");
+        viewPager.setAdapter(adapter);
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 
 }
