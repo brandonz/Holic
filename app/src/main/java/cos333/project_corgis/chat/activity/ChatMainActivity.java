@@ -1,5 +1,6 @@
 package cos333.project_corgis.chat.activity;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -58,6 +59,8 @@ public class ChatMainActivity extends AppCompatActivity {
     private ArrayList<ChatRoom> chatRoomArrayList;
     private ChatRoomsAdapter mAdapter;
     private RecyclerView recyclerView;
+    // loading dialog
+    private ProgressDialog loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,13 @@ public class ChatMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // initialize loading screen for chats population
+        loading = new ProgressDialog(this);
+        loading.setTitle(getResources().getString(R.string.loading));
+        loading.setMessage(getResources().getString(R.string.loading_message));
+        loading.setCancelable(false);
+        loading.show();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -214,8 +224,9 @@ public class ChatMainActivity extends AppCompatActivity {
      */
     private void fetchChatRooms() {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        String id = pref.getString("id", "");
         StringRequest strReq = new StringRequest(Request.Method.GET,
-                "http://holic-server.herokuapp.com/api/chats/user/" + pref.getString("id", ""), new Response.Listener<String>() {
+                getResources().getString(R.string.server_chat_user) + id, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -235,6 +246,8 @@ public class ChatMainActivity extends AppCompatActivity {
                         cr.setTimestamp(chatRoomsObj.getString("recent_time"));
                         chatRoomArrayList.add(cr);
                     }
+
+                    loading.dismiss();
 
                     // check for error flag
 //                    if (obj.getBoolean("error") == false) {
