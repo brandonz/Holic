@@ -33,10 +33,6 @@ import cos333.project_corgis.R;
 import cos333.project_corgis.chat.app.Config;
 import cos333.project_corgis.chat.app.MyApplication;
 
-
-/**
- * Created by Ravi on 01/06/15.
- */
 public class NotificationUtils {
 
     private static String TAG = NotificationUtils.class.getSimpleName();

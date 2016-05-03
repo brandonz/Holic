@@ -87,10 +87,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        // TODO: in fragment
-//        inputMessage = (EditText) findViewById(R.id.message);
-//        btnSend = (Button) findViewById(R.id.btn_send);
-//
+        // Get variables and set action bar
         Intent intent = getIntent();
         chatRoomId = intent.getStringExtra("chat_room_id");
         title = intent.getStringExtra("name");
@@ -106,55 +103,15 @@ public class ChatRoomActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Chat room not found!", Toast.LENGTH_SHORT).show();
             finish();
         }
-//
-//        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-//
-//        messageArrayList = new ArrayList<>();
-//
-//        // self user id is to identify the message owner
-//        String selfUserId = MyApplication.getInstance().getPrefManager().getUser().getId();
-//
-//        mAdapter = new ChatRoomThreadAdapter(this, messageArrayList, selfUserId);
-//
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(layoutManager);
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.setAdapter(mAdapter);
-//
-//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-//                    // new push message is received
-//                    handlePushNotification(intent);
-//                }
-//            }
-//        };
-//
-//        btnSend.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                sendMessage();
-//            }
-//        });
-//
-//        fetchChatThread();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-//        // registering the receiver for new notification
-//        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-//                new IntentFilter(Config.PUSH_NOTIFICATION));
-//
-//        NotificationUtils.clearNotifications();
     }
 
     @Override
     protected void onPause() {
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
     }
 

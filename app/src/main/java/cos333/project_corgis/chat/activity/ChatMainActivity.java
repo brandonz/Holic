@@ -236,35 +236,6 @@ public class ChatMainActivity extends AppCompatActivity {
                         chatRoomArrayList.add(cr);
                     }
 
-                    // check for error flag
-//                    if (obj.getBoolean("error") == false) {
-//                        JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
-//                        for (int i = 0; i < chatRoomsArray.length(); i++) {
-//                            JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
-//
-//                            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
-//                            System.out.println(pref.getString("id", ""));
-//
-//                            ChatRoom cr = new ChatRoom();
-//                            cr.setId(chatRoomsObj.getString("chat_room_id"));
-//                            cr.setName(chatRoomsObj.getString("name"));
-//                            cr.setLastMessage("");
-//                            cr.setUnreadCount(0);
-//                            cr.setTimestamp(chatRoomsObj.getString("created_at"));
-//                            ChatRoom cr = new ChatRoom();
-//                            cr.setId("" + i);
-//                            cr.setName("Test " + i);
-//                            cr.setLastMessage("");
-//                            cr.setUnreadCount(i);
-//                            cr.setTimestamp(chatRoomsObj.getString("created_at"));
-//                            chatRoomArrayList.add(cr);
-//                        }
-//
-//                    } else {
-//                        // error in fetching chat rooms
-//                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
-//                    }
-
                 } catch (JSONException e) {
                     Log.e(TAG, "json parsing error: " + e.getMessage());
                     Toast.makeText(getApplicationContext(), "Json parse error: " + e.getMessage(), Toast.LENGTH_LONG).show();

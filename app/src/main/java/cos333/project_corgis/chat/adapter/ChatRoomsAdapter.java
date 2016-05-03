@@ -81,13 +81,14 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
         today = today.length() < 2 ? "0" + today : today;
 
         try {
-            Date date = format.parse(dateStr);
+//            Date date = format.parse(dateStr);
+            Date date = new Date(Long.parseLong(dateStr));
             SimpleDateFormat todayFormat = new SimpleDateFormat("dd");
             String dateToday = todayFormat.format(date);
             format = dateToday.equals(today) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("dd LLL, hh:mm a");
             String date1 = format.format(date);
             timestamp = date1.toString();
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

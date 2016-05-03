@@ -9,9 +9,6 @@ import android.view.View;
 
 import cos333.project_corgis.R;
 
-/**
- * Created by Lincoln on 30/10/15.
- */
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
 

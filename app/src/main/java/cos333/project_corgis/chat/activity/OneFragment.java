@@ -33,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +86,7 @@ public class OneFragment extends Fragment{
         // self user id is to identify the message owner
         String selfUserId = MyApplication.getInstance().getPrefManager().getUser().getId();
 
-        mAdapter = new ChatRoomThreadAdapter(getActivity(), messageArrayList, selfUserId);
+        mAdapter = new ChatRoomThreadAdapter(getActivity(), messageArrayList, fbid);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -185,8 +186,8 @@ public class OneFragment extends Fragment{
                 // TODO: add the actually comment id
                 nmessage.setId("123");
                 nmessage.setMessage(message);
-                // TODO set the actualy created_at time
-                nmessage.setCreatedAt("123");
+                // TODO set the actual created_at time
+                nmessage.setCreatedAt("" + System.currentTimeMillis());
                 nmessage.setUser(user);
 
                 messageArrayList.add(nmessage);
