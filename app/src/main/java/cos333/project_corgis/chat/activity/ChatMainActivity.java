@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -59,8 +60,10 @@ public class ChatMainActivity extends AppCompatActivity {
     private ArrayList<ChatRoom> chatRoomArrayList;
     private ChatRoomsAdapter mAdapter;
     private RecyclerView recyclerView;
-    // loading dialog
+    // loading dialog for initial load. SwipeRefreshLayout should cover all other loads.
     private ProgressDialog loading;
+    // the swip refresh layout that contains the recycler view
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +160,15 @@ public class ChatMainActivity extends AppCompatActivity {
             fetchChatRooms();
         }
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                refreshItems();
+            }
+        });
+
         //Add item when 'Enter' is clicked
 //        final Button newChat = (Button) findViewById(R.id.add_new_chat);
 //        newChat.setOnClickListener(new View.OnClickListener() {
@@ -246,6 +258,9 @@ public class ChatMainActivity extends AppCompatActivity {
                         cr.setTimestamp(chatRoomsObj.getString("recent_time"));
                         chatRoomArrayList.add(cr);
                     }
+
+                    // Load complete
+                    onItemsLoadComplete();
 
                     loading.dismiss();
 
@@ -375,6 +390,26 @@ public class ChatMainActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+
+    // Refresh the chat items. Called on swipe refresh
+    void refreshItems() {
+        // Load items
+        // ...
+        if (checkPlayServices()) {
+            chatRoomArrayList.clear();
+            fetchChatRooms();
+        }
+    }
+
+    // called when the load (fetchChatRooms) finishes
+    void onItemsLoadComplete() {
+        // Update the adapter and notify data set changed
+        mAdapter.notifyDataSetChanged();
+
+        // Stop refresh animation
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
 //    @Override

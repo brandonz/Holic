@@ -170,7 +170,7 @@ public class DrinkLogActivity extends AppCompatActivity {
 
         SmsManager emergency = SmsManager.getDefault();
         String message = getResources().getString(R.string.emergency_message_format_string,
-                contactname, firstname, lastname);
+                contactname, firstname, lastname, threshold);
 
         if (textingEnabled && (BAC >= threshold) && !hasTexted && (num != null) && !num.isEmpty()) {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
