@@ -12,15 +12,42 @@
     tools:context="cos333.project_corgis.Chat"
     tools:showIn="@layout/activity_chat">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <!-- Add new chat-->
 
-        <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_name"
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/add_new_chat"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/chat_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/chat_name" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_chat"
+        android:id="@+id/create_chat"
+        android:layout_gravity="end"
+        android:layout_alignBottom="@+id/add_new_chat"
+        android:layout_alignRight="@+id/add_new_chat"
+        android:layout_alignEnd="@+id/add_new_chat" />
+
+
+    <!--Add person-->
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/input_layout_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_new_chat">
 
         <AutoCompleteTextView
             android:id="@+id/add_user"
@@ -30,40 +57,29 @@
 
     </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/add_new_chat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <Button android:id="@+id/btn_enter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/input_layout_name"
+        android:layout_alignRight="@+id/input_layout_name"
+        android:layout_below="@+id/create_chat"
+        android:onClick="addUser"
+        android:text="@string/add_person"
+        android:layout_gravity="right" />
 
-            <EditText
-                android:id="@+id/chat_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/chat_name" />
+    <TextView
+        android:id="@+id/people_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/input_layout_name"
+        android:text="@string/people_in_chat"/>
 
-        </android.support.design.widget.TextInputLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="175dp"
+        android:layout_below="@+id/people_title"
+        android:scrollbars="vertical" />
 
-        <Button android:id="@+id/btn_enter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="addUser"
-            android:text="Enter"
-            android:layout_gravity="right" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="175dp"
-            android:scrollbars="vertical" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Chat"
-            android:id="@+id/create_chat"
-            android:layout_gravity="right" />
-
-
-    </LinearLayout>
 
 </RelativeLayout>
