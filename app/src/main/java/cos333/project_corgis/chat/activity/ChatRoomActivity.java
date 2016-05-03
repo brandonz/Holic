@@ -56,16 +56,20 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     private String chatRoomId;
     private String title;
-    private RecyclerView recyclerView;
-    private ChatRoomThreadAdapter mAdapter;
-    private ArrayList<Message> messageArrayList;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private EditText inputMessage;
-    private Button btnSend;
     private String fbid;
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+
+    public String getChatRoomId() {
+        return chatRoomId;
+    }
+    public String getChatTitle() {
+        return title;
+    }
+    public String getfbid() {
+        return fbid;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,21 +91,21 @@ public class ChatRoomActivity extends AppCompatActivity {
 //        inputMessage = (EditText) findViewById(R.id.message);
 //        btnSend = (Button) findViewById(R.id.btn_send);
 //
-//        Intent intent = getIntent();
-//        chatRoomId = intent.getStringExtra("chat_room_id");
-//        title = intent.getStringExtra("name");
-//
-//        // get user id
-//        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
-//        fbid = pref.getString("id", "");
-//
-//        getSupportActionBar().setTitle(title);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//
-//        if (chatRoomId == null) {
-//            Toast.makeText(getApplicationContext(), "Chat room not found!", Toast.LENGTH_SHORT).show();
-//            finish();
-//        }
+        Intent intent = getIntent();
+        chatRoomId = intent.getStringExtra("chat_room_id");
+        title = intent.getStringExtra("name");
+
+        // get user id
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        fbid = pref.getString("id", "");
+
+        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if (chatRoomId == null) {
+            Toast.makeText(getApplicationContext(), "Chat room not found!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 //
 //        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 //
@@ -141,7 +145,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // registering the receiver for new notification
+//        // registering the receiver for new notification
 //        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
 //                new IntentFilter(Config.PUSH_NOTIFICATION));
 //
@@ -154,188 +158,10 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    /**
-     * Handling new push message, will add the message to
-     * recycler view and scroll it to bottom
-     * */
-    private void handlePushNotification(Intent intent) {
-        Message message = (Message) intent.getSerializableExtra("message");
-        String chatRoomId = intent.getStringExtra("chat_room_id");
-
-        if (message != null && chatRoomId != null) {
-            messageArrayList.add(message);
-            mAdapter.notifyDataSetChanged();
-            if (mAdapter.getItemCount() > 1) {
-                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
-            }
-        }
-    }
-
-    /**
-     * Posting a new message in chat room
-     * will make an http call to our server. Our server again sends the message
-     * to all the devices as push notification
-     * */
-    // TODO: send put request to heroku
-    private void sendMessage() {
-        final String message = this.inputMessage.getText().toString().trim();
-
-        if (TextUtils.isEmpty(message)) {
-            Toast.makeText(getApplicationContext(), "Enter a message", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String endPoint = "http://holic-server.herokuapp.com/api/chats/" + chatRoomId;
-
-        Log.e(TAG, "endpoint: " + endPoint);
-
-        this.inputMessage.setText("");
-
-        StringRequest strReq = new StringRequest(Request.Method.PUT,
-                endPoint, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.e(TAG, "response: " + response);
-
-
-                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
-                String userId = fbid;
-                String userName = pref.getString("fname", "") + pref.getString("lname", "");
-                User user = new User(userId, userName, null);
-
-                Message nmessage = new Message();
-                // TODO: add the actually comment id
-                nmessage.setId("123");
-                nmessage.setMessage(message);
-                // TODO set the actualy created_at time
-                nmessage.setCreatedAt("123");
-                nmessage.setUser(user);
-
-                messageArrayList.add(nmessage);
-
-                mAdapter.notifyDataSetChanged();
-                if (mAdapter.getItemCount() > 1) {
-                    // scrolling to bottom of the recycler view
-                    recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                NetworkResponse networkResponse = error.networkResponse;
-                Log.e(TAG, "Volley error: " + error.getMessage() + ", code: " + networkResponse);
-                Toast.makeText(getApplicationContext(), "Volley error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                inputMessage.setText(message);
-            }
-        }) {
-
-            @Override
-            // TODO: set put params
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-
-                params.put("type", "addmessage");
-                params.put("fbid", fbid);
-                params.put("message", message);
-
-//                params.put("user_id", MyApplication.getInstance().getPrefManager().getUser().getId());
-//                params.put("message", message);
-
-                Log.e(TAG, "Params: " + params.toString());
-
-                return params;
-            };
-        };
-
-
-        // disabling retry policy so that it won't make
-        // multiple http calls
-        int socketTimeout = 0;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-
-        strReq.setRetryPolicy(policy);
-
-        //Adding request to request queue
-        MyApplication.getInstance().addToRequestQueue(strReq);
-    }
-
-
-    /**
-     * Fetching all the messages of a single chat room
-     * */
-    // TODO get the chat thread from heroku and populate
-    private void fetchChatThread() {
-
-        String endPoint = "http://holic-server.herokuapp.com/api/chats/" +chatRoomId;
-        Log.e(TAG, "endPoint: " + endPoint);
-
-        StringRequest strReq = new StringRequest(Request.Method.GET,
-                endPoint, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.e(TAG, "response: " + response);
-
-                try {
-                    JSONArray fObj = new JSONArray(response);
-                    JSONObject obj = (JSONObject) fObj.get(0);
-
-                    JSONArray commentsObj = obj.getJSONArray("messages");
-
-                    for (int i = 0; i < commentsObj.length(); i++) {
-                        JSONObject commentObj = (JSONObject) commentsObj.get(i);
-
-                        String commentId = commentObj.getString("_id");
-                        String commentText = commentObj.getString("message");
-                        String createdAt = commentObj.getString("created_at");
-
-                        JSONObject userObj = commentObj.getJSONObject("user");
-                        String userId = userObj.getString("fbid");
-                        String userName = userObj.getString("username");
-                        User user = new User(userId, userName, null);
-
-                        Message message = new Message();
-                        message.setId(commentId);
-                        message.setMessage(commentText);
-                        message.setCreatedAt(createdAt);
-                        message.setUser(user);
-
-                        messageArrayList.add(message);
-                    }
-
-                    mAdapter.notifyDataSetChanged();
-                    if (mAdapter.getItemCount() > 1) {
-                        recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
-                    }
-
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing error: " + e.getMessage());
-                    Toast.makeText(getApplicationContext(), "json parse error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                NetworkResponse networkResponse = error.networkResponse;
-                Log.e(TAG, "Volley error: " + error.getMessage() + ", code: " + networkResponse);
-                Toast.makeText(getApplicationContext(), "Volley error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //Adding request to request queue
-        MyApplication.getInstance().addToRequestQueue(strReq);
-    }
-
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "ONE");
-        adapter.addFragment(new TwoFragment(), "TWO");
+        adapter.addFragment(new OneFragment(), "CHAT");
+        adapter.addFragment(new TwoFragment(), "BAC");
         viewPager.setAdapter(adapter);
     }
 
