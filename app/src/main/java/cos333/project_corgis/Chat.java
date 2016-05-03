@@ -16,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -78,58 +80,6 @@ public class Chat extends AppCompatActivity{
         // populate friends
         getFriends();
 
-        //Add item when 'Enter' is clicked
-        final Button enter = (Button) findViewById(R.id.btn_enter);
-        enter.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                EditText editText = (EditText) findViewById(R.id.add_user);
-//                String fb_id = editText.getText().toString();
-//                logs.add(fb_id);
-                String name = editText.getText().toString();
-                if (fbHolicFriends.containsKey(name)) {
-                    if (names.contains(name)) {
-                        // already added friend, notify user and do nothing
-                        AlertDialog confirm;
-                        AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this);
-
-                        builder.setTitle(R.string.error_message);
-                        builder.setMessage(R.string.duplicate_friend);
-                        builder.setCancelable(true);
-
-                        builder.setPositiveButton(R.string.okay,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                    }
-                                });
-                        confirm = builder.create();
-                        confirm.show();
-                    } else {
-                        String id = fbHolicFriends.get(name);
-                        names.add(name);
-                        ids.add(id);
-                        cAdapter.notifyDataSetChanged();
-                        editText.setText("");
-                    }
-                } else {
-                    // invalid name, notify user and do nothing
-                    AlertDialog confirm;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this);
-
-                    builder.setTitle(R.string.error_message);
-                    builder.setMessage(R.string.invalid_friend);
-                    builder.setCancelable(true);
-
-                    builder.setPositiveButton(R.string.okay,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                }
-                            });
-                    confirm = builder.create();
-                    confirm.show();
-                }
-            }
-        });
-
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -147,6 +97,55 @@ public class Chat extends AppCompatActivity{
             }
         });
 
+    }
+
+    // Adds the user from add_user.
+    public void addUser(View view) {
+        EditText editText = (EditText) findViewById(R.id.add_user);
+//                String fb_id = editText.getText().toString();
+//                logs.add(fb_id);
+        String name = editText.getText().toString();
+        if (fbHolicFriends.containsKey(name)) {
+            if (names.contains(name)) {
+                // already added friend, notify user and do nothing
+                AlertDialog confirm;
+                AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this);
+
+                builder.setTitle(R.string.error_message);
+                builder.setMessage(R.string.duplicate_friend);
+                builder.setCancelable(true);
+
+                builder.setPositiveButton(R.string.okay,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                confirm = builder.create();
+                confirm.show();
+            } else {
+                String id = fbHolicFriends.get(name);
+                names.add(name);
+                ids.add(id);
+                cAdapter.notifyDataSetChanged();
+                editText.setText("");
+            }
+        } else {
+            // invalid name, notify user and do nothing
+            AlertDialog confirm;
+            AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this);
+
+            builder.setTitle(R.string.error_message);
+            builder.setMessage(R.string.invalid_friend);
+            builder.setCancelable(true);
+
+            builder.setPositiveButton(R.string.okay,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+            confirm = builder.create();
+            confirm.show();
+        }
     }
 
     // Gets user's friends using Holic from Facebook, parses into name -> id dict
@@ -175,6 +174,14 @@ public class Chat extends AppCompatActivity{
                                     System.out.println("to catch an exception");
                                 }
                             }
+                            // Attach the autocomplete adapter
+                            int numFriends = fbHolicFriends.size();
+                            String[] friends = fbHolicFriends.keySet().toArray(new String[numFriends]);
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(Chat.this,
+                                    android.R.layout.simple_dropdown_item_1line, friends);
+                            AutoCompleteTextView textView = (AutoCompleteTextView)
+                                    findViewById(R.id.add_user);
+                            textView.setAdapter(adapter);
                             loading.dismiss();
                         } catch (Exception e) {
                             loading.dismiss();
@@ -200,6 +207,7 @@ public class Chat extends AppCompatActivity{
         ).executeAsync();
     }
 
+    // Creates the new chat
     public void sendInfo(View view) {
         Profile currProf = Profile.getCurrentProfile();
         String id = currProf.getId();
@@ -215,7 +223,7 @@ public class Chat extends AppCompatActivity{
         String fbids = id + ",";
 
         //Creates format string for all fbids
-        for (int i = 0; i < ids.size(); i++) { //instead of logs use people
+        for (int i = 0; i < ids.size(); i++) {
             fbids = fbids.concat(ids.get(i));
             if (i != ids.size()-1)
                 fbids = fbids.concat(",");

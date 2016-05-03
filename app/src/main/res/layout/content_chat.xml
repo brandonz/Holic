@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/add_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,6 +46,7 @@
         <Button android:id="@+id/btn_enter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="addUser"
             android:text="Enter"
             android:layout_gravity="right" />
 
