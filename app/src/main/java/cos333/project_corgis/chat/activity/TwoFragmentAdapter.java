@@ -22,15 +22,18 @@ public class TwoFragmentAdapter extends RecyclerView.Adapter<TwoFragmentAdapter.
     public class TwoFragmentViewHolder extends RecyclerView.ViewHolder {
         TextView names;
         TextView peopleBacs;
+        TextView nameTitle;
+        TextView peopleBacTitle;
 
         public TwoFragmentViewHolder(View view) {
             super(view);
+
             names = (TextView)itemView.findViewById(R.id.name);
             peopleBacs = (TextView) itemView.findViewById(R.id.person_bac);
         }
     }
 
-    public TwoFragmentAdapter(ArrayList<People> bac) {
+    public TwoFragmentAdapter(Context mContext, ArrayList<People> bac) {
         this.people = bac;
     }
 
@@ -43,11 +46,12 @@ public class TwoFragmentAdapter extends RecyclerView.Adapter<TwoFragmentAdapter.
     }
 
     @Override
-    public void onBindViewHolder(TwoFragmentViewHolder holder, int position) {
-        holder.names.setText("Test");
-        holder.peopleBacs.setText("Test2");
-//        holder.names.setText(people.get(position).name);
-//        holder.peopleBacs.setText(String.valueOf(people.get(position).bac));
+    public void onBindViewHolder(final TwoFragmentViewHolder holder, int position) {
+//        holder.names.setText("Test");
+//        holder.peopleBacs.setText("Test2");
+
+        holder.names.setText(people.get(position).name);
+        holder.peopleBacs.setText(String.format("%.3f",people.get(position).bac));
     }
 
     @Override

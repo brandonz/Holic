@@ -9,10 +9,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +31,9 @@ import java.util.ArrayList;
 import cos333.project_corgis.HolicUtil;
 import cos333.project_corgis.R;
 import cos333.project_corgis.RestClient;
+import cos333.project_corgis.chat.app.MyApplication;
+import cos333.project_corgis.chat.model.Message;
+import cos333.project_corgis.chat.model.User;
 
 public class TwoFragment extends Fragment {
 
@@ -31,7 +42,7 @@ public class TwoFragment extends Fragment {
 
     private ArrayList<String> names = new ArrayList<>();
     private ArrayList<Double> bac = new ArrayList<>();
-    private ArrayList<People> people = new ArrayList<>();
+    private ArrayList<People> people;
     private RecyclerView recyclerView;
     private TwoFragmentAdapter fAdapter;
     private Intent intent;
@@ -50,19 +61,28 @@ public class TwoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Intent currIntent = getActivity().getIntent();
-        chatRoomId = currIntent.getStringExtra("chat_room_id");
-
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_two, container, false);
+
+        chatRoomId = ((ChatRoomActivity)getActivity()).getChatRoomId();
+
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view2);
-        fAdapter = new TwoFragmentAdapter(people);
+        TextView nameTitle = (TextView) rootView.findViewById(R.id.name_title);
+        TextView peopleBacTitle = (TextView) rootView.findViewById(R.id.person_bac_title);
+        nameTitle.setText("USER");
+        peopleBacTitle.setText("BAC");
+
+        people = new ArrayList<>();
+
+        fAdapter = new TwoFragmentAdapter(getActivity(), people);
+
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(fAdapter);
 
-        new GetAsyncTask().execute(getResources().getString(R.string.server_bac) + chatRoomId);
+//        new GetAsyncTask().execute(getResources().getString(R.string.server_bac) + chatRoomId);
+        fetchBAC();
 
         return rootView;
 
@@ -107,6 +127,57 @@ public class TwoFragment extends Fragment {
             }
 
         }
+    }
+
+    private void fetchBAC() {
+        String endPoint = "https://holic-server.herokuapp.com/api/chats/bac/" + chatRoomId;
+        StringRequest strReq = new StringRequest(Request.Method.GET,
+                endPoint, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.e("TwoFragment", "response: " + response);
+
+                try {
+                    JSONArray obj = new JSONArray(response);
+
+                    for (int i = 0; i < obj.length(); i++) {
+                        JSONObject personObj = (JSONObject) obj.get(i);
+
+                        String name = personObj.getString("name");
+                        JSONObject bacObj = personObj.getJSONObject("bac");
+                        long drinktime = bacObj.getLong("drinktime");
+                        double currbac = bacObj.getDouble("currbac");
+
+                        currbac = HolicUtil.calcBAC(currbac,drinktime,0,1,1);
+
+                        People person = new People(name, currbac);
+
+                        people.add(person);
+                    }
+
+                    fAdapter.notifyDataSetChanged();
+                    if (fAdapter.getItemCount() > 1) {
+                        recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, fAdapter.getItemCount() - 1);
+                    }
+
+                } catch (JSONException e) {
+                    Log.e("TwoFragment", "json parsing error: " + e.getMessage());
+                    Toast.makeText(getActivity().getApplicationContext(), "json parse error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                Log.e("TwoFragment", "Volley error: " + error.getMessage() + ", code: " + networkResponse);
+                Toast.makeText(getActivity().getApplicationContext(), "Volley error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Adding request to request queue
+        MyApplication.getInstance().addToRequestQueue(strReq);
     }
 
 }
