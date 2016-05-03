@@ -84,8 +84,8 @@ public class StatsGraph extends AppCompatActivity {
         long last = log.get(log.size() - 1).time;
         long diff = last - first;
 
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(diff) % 60;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff) % 60;
         long hours = TimeUnit.MILLISECONDS.toHours(diff);
         String timedelta = getResources().getString(R.string.length_format,
                 hours, minutes, seconds);
