@@ -101,7 +101,7 @@ public class Chat extends AppCompatActivity{
 
     // Adds the user from add_user.
     public void addUser(View view) {
-        EditText editText = (EditText) findViewById(R.id.add_user);
+        final EditText editText = (EditText) findViewById(R.id.add_user);
 //                String fb_id = editText.getText().toString();
 //                logs.add(fb_id);
         String name = editText.getText().toString();
@@ -118,6 +118,7 @@ public class Chat extends AppCompatActivity{
                 builder.setPositiveButton(R.string.okay,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                editText.setText("");
                             }
                         });
                 confirm = builder.create();
