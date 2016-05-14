@@ -45,13 +45,17 @@ public class LandingActivity extends AppCompatActivity {
 //            }
 //        });
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean("inSession", false);
-        editor.apply();
-
         nightButton = (ImageButton) findViewById(R.id.new_night);
         nightButton.setEnabled(true);
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        inSession = pref.getBoolean("inSession", false); // default? should never go there
+        if (inSession) {
+            nightButton.setImageResource(R.drawable.continue_night);
+        }
+        else {
+            nightButton.setImageResource(R.drawable.start_night_2);
+        }
     }
 
     @Override
