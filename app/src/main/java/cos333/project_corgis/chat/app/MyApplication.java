@@ -11,10 +11,6 @@ import com.android.volley.toolbox.Volley;
 import cos333.project_corgis.chat.activity.ChatLoginActivity;
 import cos333.project_corgis.chat.helper.MyPreferenceManager;
 
-/**
- * Created by Ravi on 13/05/15.
- */
-
 public class MyApplication extends Application {
 
     public static final String TAG = MyApplication.class

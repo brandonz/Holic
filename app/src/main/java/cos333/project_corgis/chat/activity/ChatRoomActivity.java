@@ -91,6 +91,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         Intent intent = getIntent();
         chatRoomId = intent.getStringExtra("chat_room_id");
         title = intent.getStringExtra("name");
+        System.out.println(title);
 
         // get user id
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);

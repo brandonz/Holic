@@ -117,6 +117,8 @@ public class MyGcmPushReceiver extends GcmListenerService {
                 message.setId(datObj.getString("message_id"));
                 message.setCreatedAt(datObj.getString("created_at"));
 
+                String chatTitle = datObj.getString("chat_name");
+
 //                JSONObject uObj = datObj.getJSONObject("user");
 
                 // skip the message if the message belongs to same user as
@@ -153,6 +155,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
                     // app is in background. show the message in notification try
                     Intent resultIntent = new Intent(getApplicationContext(), ChatRoomActivity.class);
                     resultIntent.putExtra("chat_room_id", chatRoomId);
+                    resultIntent.putExtra("name", chatTitle);
                     showNotificationMessage(getApplicationContext(), title, user.getName() + " : " + message.getMessage(), message.getCreatedAt(), resultIntent);
                 }
 
@@ -208,6 +211,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
 
                     // app is in background. show the message in notification try
                     Intent resultIntent = new Intent(getApplicationContext(), ChatMainActivity.class);
+                    resultIntent.putExtra("name", "TEST");
 
                     // check for push notification image attachment
                     if (TextUtils.isEmpty(imageUrl)) {
