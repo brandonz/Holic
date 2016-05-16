@@ -35,6 +35,7 @@ import java.util.Hashtable;
 
 import cos333.project_corgis.chat.activity.ChatMainActivity;
 import cos333.project_corgis.chat.activity.ChatRoomActivity;
+import cos333.project_corgis.chat.gcm.GcmIntentService;
 
 /**
  * Created by belinda on 4/28/2016.
@@ -247,6 +248,8 @@ public class Chat extends AppCompatActivity{
                 JSONObject obj = new JSONObject(result);
 
                 if (obj.length() > 0) {
+                    subscribeToTopic(obj.getString("chat_room_id"));
+
                     intent.putExtra("chat_room_id", obj.getString("chat_room_id"));
                     intent.putExtra("name", name);
                     startActivity(intent);
@@ -258,5 +261,12 @@ public class Chat extends AppCompatActivity{
             } catch(Exception e) {
             }
         }
+    }
+
+    private void subscribeToTopic(String chat_id) {
+        Intent intent = new Intent(this, GcmIntentService.class);
+        intent.putExtra(GcmIntentService.KEY, GcmIntentService.SUBSCRIBE);
+        intent.putExtra(GcmIntentService.TOPIC, "topic_" + chat_id);
+        startService(intent);
     }
 }
